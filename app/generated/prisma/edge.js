@@ -113,7 +113,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\Asus Vivobook\\Desktop\\New folder (4)\\ai\\app\\generated\\prisma",
+      "value": "C:\\Users\\bayar\\OneDrive\\Desktop\\yoov\\working-pdf\\app\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -127,7 +127,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\Asus Vivobook\\Desktop\\New folder (4)\\ai\\prisma\\schema.prisma",
+    "sourceFilePath": "C:\\Users\\bayar\\OneDrive\\Desktop\\yoov\\working-pdf\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
@@ -145,7 +145,7 @@ const config = {
     "db": {
       "url": {
         "fromEnvVar": "DATABASE_URL",
-        "value": "mongodb+srv://belgudei379:belgudei379@cluster1.vdxs3pn.mongodb.net/pdf"
+        "value": "mongodb+srv://jack:docanal@cluster1.nz1e9f0.mongodb.net/db"
       }
     }
   },
