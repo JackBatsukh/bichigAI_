@@ -1,3 +1,4 @@
+// components/FileUpload.tsx
 "use client";
 
 import { useState } from "react";
@@ -23,6 +24,7 @@ export default function FileUpload() {
     setMessage(data.message || "Upload complete");
 
     if (data.document?.text) {
+      // Save the parsed text to localStorage or pass via query
       localStorage.setItem("pdfText", data.document.text);
       router.push("/chat");
     }
