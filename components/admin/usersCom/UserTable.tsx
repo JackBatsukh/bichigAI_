@@ -1,0 +1,114 @@
+"use client";
+
+import { useState } from "react";
+
+interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  status: "active" | "inactive";
+  lastLogin: string;
+}
+
+export default function UserTable() {
+  const [users, setUsers] = useState<User[]>([
+    {
+      id: "1",
+      name: "Болд Баатар",
+      email: "bold@example.com",
+      role: "Админ",
+      status: "active",
+      lastLogin: "2024-05-01 14:30",
+    },
+    {
+      id: "2",
+      name: "Сараа Ганбаатар",
+      email: "saraa@example.com",
+      role: "Хэрэглэгч",
+      status: "active",
+      lastLogin: "2024-05-02 09:15",
+    },
+  ]);
+
+  return (
+    <div className="overflow-x-auto">
+      <table className="min-w-full divide-y divide-gray-200">
+        <thead className="bg-gray-50">
+          <tr>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Нэр
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              И-мэйл
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Үүрэг
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Төлөв
+            </th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Сүүлд нэвтэрсэн
+            </th>
+            <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Үйлдэл
+            </th>
+          </tr>
+        </thead>
+        <tbody className="bg-white divide-y divide-gray-200">
+          {users.map((user) => (
+            <tr key={user.id} className="hover:bg-gray-50">
+              <td className="px-6 py-4 whitespace-nowrap">
+                <div className="flex items-center">
+                  <div className="flex-shrink-0 h-10 w-10">
+                    <div className="h-10 w-10 rounded-full bg-blue-500 flex items-center justify-center">
+                      <span className="text-white font-semibold">
+                        {user.name.charAt(0)}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="ml-4">
+                    <div className="text-sm font-medium text-gray-900">
+                      {user.name}
+                    </div>
+                  </div>
+                </div>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <div className="text-sm text-gray-900">{user.email}</div>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                  {user.role}
+                </span>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <span
+                  className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                    user.status === "active"
+                      ? "bg-green-100 text-green-800"
+                      : "bg-red-100 text-red-800"
+                  }`}
+                >
+                  {user.status === "active" ? "Идэвхтэй" : "Идэвхгүй"}
+                </span>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {user.lastLogin}
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <button className="text-blue-600 hover:text-blue-900 mr-3">
+                  Засах
+                </button>
+                <button className="text-red-600 hover:text-red-900">
+                  Устгах
+                </button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+} 
