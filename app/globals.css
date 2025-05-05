@@ -24,6 +24,72 @@ body {
   animation: gridMove 20s linear infinite;
 }
 
+body:has(.login-page) {
+  background: linear-gradient(
+    -45deg,
+    #000000,
+    #020817,
+    #051230,
+    #000000,
+    #01081d
+  );
+  background-size: 300% 300%;
+  animation: gradient 20s ease infinite;
+}
+
+/* Register page gradient */
+.bg-gradient-custom {
+  background: linear-gradient(
+    -45deg,
+    #000000,
+    /* Black */ #020817,
+    /* Dark blue */ #051230,
+    /* Deeper blue */ #000000,
+    /* Black */ #01081d /* Dark blue */
+  );
+  background-size: 300% 300%;
+}
+
+.animate-gradient {
+  animation: gradient 20s ease infinite;
+}
+
+.bg-black\/20 {
+  position: relative;
+  overflow: hidden;
+  background-color: rgba(0, 0, 0, 0.3) !important;
+}
+
+.bg-black\/20::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(
+    circle at center,
+    rgba(2, 8, 23, 0.3) 0%,
+    transparent 70%
+  );
+  opacity: 0;
+  animation: pulse 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+/* Glass effect improvements */
+.backdrop-blur-sm {
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background-color: rgba(1, 4, 16, 0.7);
+}
+
+/* Smooth transitions */
+* {
+  transition: all 0.2s ease-in-out;
+}
+
+
 @keyframes blob {
   0% {
     transform: translate(0px, 0px) scale(1);
@@ -44,6 +110,30 @@ body {
   }
   100% {
     background-position: 80px 80px, 80px 80px;
+  }
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.8;
   }
 }
 
