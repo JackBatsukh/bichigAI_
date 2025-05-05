@@ -13,19 +13,24 @@
 //   );
 // }
 
-import HeroSection from '@/components/land/HeroSection';
-import FeaturesGrid from '@/components/land/FeaturesGrid';
-import HowItWorks from '@/components/land/HowItWorks';
-import PricingSection from '@/components/land/PricingSection';
-import Footer from '@/components/land/footer';
+import HeroSection from "@/components/land/HeroSection";
+import FeaturesGrid from "@/components/land/FeaturesGrid";
+import HowItWorks from "@/components/land/HowItWorks";
+import PricingSection from "@/components/land/PricingSection";
+import Footer from "@/components/land/footer";
+import Header from "@/components/land/Header";
+import { div } from "framer-motion/client";
 export default function Home() {
   return (
-    <main className="max-w-7xl mx-auto px-4 py-8 h-screen">
-      <HeroSection />
-      <FeaturesGrid />
-      <HowItWorks />
-      <PricingSection />
-      <Footer/>
-    </main>
+    <div>
+      <Header />
+      <main className="max-w-7xl mx-auto px-4 py-8 h-screen">
+        <HeroSection />
+        <FeaturesGrid />
+        <HowItWorks />
+        <PricingSection />
+        <Footer />
+      </main>
+    </div>
   );
 }

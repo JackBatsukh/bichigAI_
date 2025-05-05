@@ -26,7 +26,6 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-          <Header/>
           <div className="grid-bg" aria-hidden="true" />
         {children}
       </body>
