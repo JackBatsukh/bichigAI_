@@ -10,12 +10,10 @@ export default function ChatPage() {
   const [loading, setLoading] = useState(false);
   const chatRef = useRef<HTMLDivElement>(null);
 
-  // Scroll to the latest message
   useEffect(() => {
     chatRef.current?.lastElementChild?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // Load PDF text from localStorage and auto-fill the input
   useEffect(() => {
     const savedText = localStorage.getItem("pdfText");
     if (savedText) {
@@ -37,9 +35,9 @@ export default function ChatPage() {
         method: "POST",
         headers: {
           Authorization:
-            "Bearer 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",
+            "Bearer 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",
           "Content-Type": "application/json",
-          "X-Title": "PDF AI Chat",
+          "X-Title": "Document AI Chat",
           "HTTP-Referer": "http://localhost:3000",
         },
         body: JSON.stringify({
@@ -52,7 +50,6 @@ export default function ChatPage() {
       const aiResponse =
         data.choices?.[0]?.message?.content || "No response from AI";
 
-      // Format the AI response with proper line breaks and paragraphs
       const formattedResponse = aiResponse
         .split('\n')
         .map((line: string) => line.trim())
