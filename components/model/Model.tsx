@@ -20,11 +20,8 @@ const Model = React.forwardRef<Group, {}>((props, ref) => {
 
   useFrame((_, delta) => {
     if (actions["Experiment"]) {
-      // Get the duration of the animation
       const duration = actions["Experiment"].getClip().duration;
-      // Increment the animation time
       animationRef.current += delta;
-      // Loop the animation
       actions["Experiment"].time = animationRef.current % duration;
     }
   });

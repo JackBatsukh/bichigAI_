@@ -1,5 +1,5 @@
-import React from 'react';
-import Link from 'next/link';
+import React from "react";
+import Link from "next/link";
 
 export default function Header() {
   return (
@@ -37,7 +37,7 @@ export default function Header() {
         </nav>
 
         <Link
-          href="/sign-in"
+          href="/register"
           className="ml-4 px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-lg transition border border-blue-700"
         >
           Нэвтрэх
