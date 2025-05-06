@@ -22,26 +22,26 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
           <h1 className="text-2xl font-bold">БичигAI</h1>
         </div>
         <nav className="flex-1  py-6 space-y-2">
-          <div className="flex items-center  mb-4 gap-4 block px-4 py-2 rounded hover:bg-gray-700 transition">
+          <div className="flex items-center  mb-4 gap-4 block px-8 py-2 rounded hover:bg-gray-700 transition">
             <MenuIcon />
             <Link href="/admin/home" className="text-[20px]">
               Нүүр
             </Link>
           </div>
-          <div className="flex items-center  mb-4 gap-4 block px-4 py-2 rounded hover:bg-gray-700 transition">
+          <div className="flex items-center  mb-4 gap-4 block px-8 py-2 rounded hover:bg-gray-700 transition">
             <UsersIcon />
             <Link href="/admin/users" className="text-[20px]">
               Хэрэглэгч
             </Link>
           </div>
-          <div className="flex items-center  mb-4 gap-4 block px-4 py-2 rounded hover:bg-gray-700 transition">
+          <div className="flex items-center  mb-4 gap-4 block px-8 py-2 rounded hover:bg-gray-700 transition">
             <AdminPremiumPage />
             <Link href="/admin/premium" className="text-[20px]">
               Төлбөрт
             </Link>
           </div>
         </nav>
-        <h1 className="flex items-center  mb-4 gap-4 block px-4 py-2 rounded hover:bg-red-500 transition">
+        <h1 className="flex items-center  mb-4 gap-4 block px-8 py-2 rounded hover:bg-red-500 transition">
           Гарах
         </h1>
       </div>
