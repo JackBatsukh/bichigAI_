@@ -29,7 +29,7 @@ export default function Home() {
   useEffect(() => {
     if (session) {
       console.log(session);
-      router.push("/chat");
+      // router.push("/chat");
     }
   }, [session, router]);
 
