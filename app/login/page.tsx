@@ -20,9 +20,19 @@ export default function LoginPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
+    const res = await signIn("credentials", {
+      redirect: false,
+      email: formData.email,
+      password: formData.password,
+    });
+
+    if (res?.error) {
+      alert(res.error);
+    } else {
+      window.location.href = "/";
+    }
   };
 
   const handleGoogleSignIn = async () => {

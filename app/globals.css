@@ -129,21 +129,21 @@ body:has(.login-page) {
   transition: all 0.2s ease-in-out;
 }
 
-/* Drop shadow with 100% opacity */
+/* Drop shadow with darker colors */
 .shadow-bottom {
-  box-shadow: 0 8px 16px rgba(0, 0, 255, 1);
+  box-shadow: 0 8px 16px rgba(0, 0, 60, 0.7);
 }
 
 .shadow-blue {
-  box-shadow: 0 8px 30px rgba(0, 128, 255, 1);
+  box-shadow: 0 8px 30px rgba(0, 20, 60, 0.8);
 }
 
 .shadow-glow {
-  box-shadow: 0 0 20px rgba(0, 255, 255, 1);
+  box-shadow: 0 0 20px rgba(0, 40, 80, 0.7);
 }
 
 .shadow-upload {
-  box-shadow: 0 10px 25px rgba(0, 64, 255, 1);
+  box-shadow: 0 10px 25px rgba(0, 20, 60, 0.7);
 }
 
 @keyframes blob {
@@ -208,5 +208,5 @@ body:has(.login-page) {
 
 .glass {
   @apply bg-white/10 backdrop-blur-xl rounded-2xl border border-white/20;
-  box-shadow: 0 20px 30px rgba(0, 64, 255, 1);
+  box-shadow: 0 20px 30px rgba(0, 15, 40, 0.7);
 }

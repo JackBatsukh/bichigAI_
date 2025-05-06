@@ -83,7 +83,7 @@ export default function UploadPage() {
         </div>
 
         {/* Main content */}
-        <div className="flex" style={{ boxShadow: "0 20px 40px rgba(0, 64, 255, 1)" }}>
+        <div className="flex" style={{ boxShadow: "0 20px 40px rgba(0, 20, 50, 0.8)" }}>
           {/* Sidebar */}
           <div className="w-64 bg-slate-900 bg-opacity-80 rounded-l-lg">
             <div className="p-4 border-b border-slate-700">
@@ -143,7 +143,7 @@ export default function UploadPage() {
                         ? "bg-gradient-to-br from-blue-600 to-purple-600 bg-opacity-40 border-blue-400"
                         : "bg-gradient-to-br from-blue-900 to-purple-900 bg-opacity-30 border-blue-500"
                     }`}
-                    style={{ boxShadow: isHovering ? "0 20px 40px rgba(0, 128, 255, 1)" : "0 10px 30px rgba(0, 64, 255, 1)" }}
+                    style={{ boxShadow: isHovering ? "0 20px 40px rgba(0, 30, 80, 0.8)" : "0 10px 30px rgba(0, 20, 60, 0.7)" }}
                     onMouseEnter={() => setIsHovering(true)}
                     onMouseLeave={() => setIsHovering(false)}
                     onClick={selectedFile ? openFileSelector : selectFile}>
@@ -160,7 +160,7 @@ export default function UploadPage() {
                       </>
                     ) : (
                       <>
-                        <div className="w-16 h-16 rounded-full bg-blue-600 bg-opacity-50 flex items-center justify-center mb-4" style={{ boxShadow: "0 0 20px rgba(0, 255, 255, 1)" }}>
+                        <div className="w-16 h-16 rounded-full bg-blue-600 bg-opacity-50 flex items-center justify-center mb-4" style={{ boxShadow: "0 0 20px rgba(0, 80, 120, 0.7)" }}>
                           <Upload size={32} className="text-blue-200" />
                         </div>
                         <p className="text-center mb-1 text-blue-100 font-medium">
@@ -168,7 +168,7 @@ export default function UploadPage() {
                         </p>
                         <p className="text-center text-blue-200">analyze</p>
                         {isHovering && (
-                          <button className="mt-4 px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-md hover:from-blue-600 hover:to-purple-600 transition-colors text-white font-medium" style={{ boxShadow: "0 5px 20px rgba(0, 128, 255, 1)" }}>
+                          <button className="mt-4 px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-md hover:from-blue-600 hover:to-purple-600 transition-colors text-white font-medium" style={{ boxShadow: "0 5px 20px rgba(0, 30, 70, 0.8)" }}>
                             Select File
                           </button>
                         )}
@@ -176,7 +176,7 @@ export default function UploadPage() {
                     )}
                   </div>
                 ) : (
-                  <div className="border-2 border-blue-500 rounded-md h-80 p-4 bg-gradient-to-br from-blue-900 to-purple-900 bg-opacity-30" style={{ boxShadow: "0 10px 30px rgba(0, 64, 255, 1)" }}>
+                  <div className="border-2 border-blue-500 rounded-md h-80 p-4 bg-gradient-to-br from-blue-900 to-purple-900 bg-opacity-30" style={{ boxShadow: "0 10px 30px rgba(0, 20, 60, 0.7)" }}>
                     <div className="flex justify-between items-center mb-4 pb-2 border-b border-blue-700">
                       <h3 className="font-medium text-blue-200">Select a file</h3>
                       <button
@@ -189,7 +189,7 @@ export default function UploadPage() {
                     <div className="grid grid-cols-2 gap-4">
                       <div
                         className="flex flex-col items-center justify-center p-4 border border-blue-700 rounded-md hover:bg-blue-700 hover:bg-opacity-30 cursor-pointer bg-blue-800 bg-opacity-20"
-                        style={{ boxShadow: "0 5px 15px rgba(0, 128, 255, 1)" }}
+                        style={{ boxShadow: "0 5px 15px rgba(0, 30, 70, 0.8)" }}
                         onClick={selectFile}>
                         <Folder size={40} className="mb-2 text-blue-300" />
                         <p className="text-blue-100">Computer</p>
@@ -236,7 +236,7 @@ export default function UploadPage() {
             {/* Run button */}
             <button 
               className="mt-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-md py-3 w-full hover:from-blue-700 hover:to-purple-700 transition-colors"
-              style={{ boxShadow: "0 10px 30px rgba(0, 64, 255, 1)" }}>
+              >
               Run analyze
             </button>
           </div>
