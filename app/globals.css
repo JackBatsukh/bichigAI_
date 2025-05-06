@@ -7,7 +7,45 @@ html {
 body {
   @apply bg-[#000014] min-h-screen text-white relative overflow-x-hidden;
   background-attachment: fixed;
-  font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+}
+
+.blur-shape {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  top: 0;
+  left: 90%;
+  transform: translateX(-50%);
+  background: radial-gradient(
+    circle at center,
+    rgba(0, 255, 255, 0.5),
+    rgba(0, 128, 255, 0.5),
+    rgba(0, 0, 128, 0.3)
+  );
+  filter: blur(100px);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.blur-shape-left {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  bottom: 0;
+  left: 0%;
+  transform: translateX(-50%);
+  background: radial-gradient(
+    circle at center,
+    rgba(0, 255, 255, 0.6),
+    rgba(0, 128, 255, 0.5),
+    rgba(0, 0, 128, 1)
+  );
+  filter: blur(100px);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: -1;
 }
 
 .grid-bg {
@@ -17,9 +55,11 @@ body {
   width: 100vw;
   height: 100vh;
   pointer-events: none;
-  background-image:
-    linear-gradient(rgba(0,255,255,0.13) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,255,255,0.13) 1px, transparent 1px);
+  background-image: linear-gradient(
+      rgba(0, 255, 255, 0.13) 1px,
+      transparent 1px
+    ),
+    linear-gradient(90deg, rgba(0, 255, 255, 0.13) 1px, transparent 1px);
   background-size: 80px 80px;
   animation: gridMove 20s linear infinite;
 }
@@ -41,11 +81,11 @@ body:has(.login-page) {
 .bg-gradient-custom {
   background: linear-gradient(
     -45deg,
-    #000000,
-    /* Black */ #020817,
-    /* Dark blue */ #051230,
-    /* Deeper blue */ #000000,
-    /* Black */ #01081d /* Dark blue */
+    #000000, /* Black */
+    #020817, /* Dark blue */
+    #051230, /* Deeper blue */
+    #000000, /* Black */
+    #01081d /* Dark blue */
   );
   background-size: 300% 300%;
 }
@@ -89,6 +129,22 @@ body:has(.login-page) {
   transition: all 0.2s ease-in-out;
 }
 
+/* Drop shadow with 100% opacity */
+.shadow-bottom {
+  box-shadow: 0 8px 16px rgba(0, 0, 255, 1);
+}
+
+.shadow-blue {
+  box-shadow: 0 8px 30px rgba(0, 128, 255, 1);
+}
+
+.shadow-glow {
+  box-shadow: 0 0 20px rgba(0, 255, 255, 1);
+}
+
+.shadow-upload {
+  box-shadow: 0 10px 25px rgba(0, 64, 255, 1);
+}
 
 @keyframes blob {
   0% {
@@ -104,6 +160,7 @@ body:has(.login-page) {
     transform: translate(0px, 0px) scale(1);
   }
 }
+
 @keyframes gridMove {
   0% {
     background-position: 0 0, 0 0;
@@ -149,7 +206,7 @@ body:has(.login-page) {
   animation-delay: 4s;
 }
 
-
 .glass {
-  @apply bg-white/10 backdrop-blur-xl rounded-2xl border border-white/20 shadow-2xl;
+  @apply bg-white/10 backdrop-blur-xl rounded-2xl border border-white/20;
+  box-shadow: 0 20px 30px rgba(0, 64, 255, 1);
 }
