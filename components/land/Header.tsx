@@ -10,9 +10,8 @@ export default function Header() {
       <div className="mx-auto w-full max-w-7xl flex items-center justify-between px-3 md:px-4">
         <div className="text-xl font-extrabold text-white tracking-wide flex items-center gap-2">
           <Link href="/">
-            <span className="bg-gradient-to-r from-blue-400 to-blue-700 text-transparent bg-clip-text cursor-pointer">
-              БичигAI
-            </span>
+            {/* <span className="logo-font bg-gradient-to-r from-blue-400 to-blu/e-700 text-transparent bg-clip-text cursor-pointer"> */}
+            <div className="logo-font ">БичигAI</div>
           </Link>
         </div>
 

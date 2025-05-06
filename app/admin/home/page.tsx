@@ -1,5 +1,4 @@
 "use client";
-
 import { motion } from "framer-motion";
 import DashboardStats from "@/components/admin/homeCom/DashboardStats";
 import RecentActivity from "@/components/admin/homeCom/RecentActivity";

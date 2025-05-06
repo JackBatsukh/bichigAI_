@@ -1,8 +1,6 @@
 "use client";
 import "../globals.css";
-// import Navbar from "@/components/main/navbar";
 import Footer from "@/components/main/footer";
-// import Lottie from "lottie-react";
 import dynamic from "next/dynamic";
 
 const Scene = dynamic(() => import("@/components/model/Scene"), { ssr: false });

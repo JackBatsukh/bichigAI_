@@ -1,5 +1,13 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'ADVERGOTHIC';
+  src: url('/fonts/ADVERGOTHIC.TTF') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -84,7 +92,27 @@ body:has(.login-page) {
   background-color: rgba(1, 4, 16, 0.7);
 }
 
-/* Smooth transitions */
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+
+.glass {
+  @apply bg-white/10 backdrop-blur-xl rounded-2xl border border-white/20 shadow-2xl;
+}
+
+.logo-font {
+  font-family: 'ADVERGOTHIC', sans-serif;
+}
+
 * {
   transition: all 0.2s ease-in-out;
 }
@@ -137,19 +165,3 @@ body:has(.login-page) {
   }
 }
 
-.animate-blob {
-  animation: blob 7s infinite;
-}
-
-.animation-delay-2000 {
-  animation-delay: 2s;
-}
-
-.animation-delay-4000 {
-  animation-delay: 4s;
-}
-
-
-.glass {
-  @apply bg-white/10 backdrop-blur-xl rounded-2xl border border-white/20 shadow-2xl;
-}
