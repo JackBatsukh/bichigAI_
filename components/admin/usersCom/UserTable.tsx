@@ -21,19 +21,11 @@ export default function UserTable() {
       status: "active",
       lastLogin: "2024-05-01 14:30",
     },
-    {
-      id: "2",
-      name: "Сараа Ганбаатар",
-      email: "saraa@example.com",
-      role: "Хэрэглэгч",
-      status: "active",
-      lastLogin: "2024-05-02 09:15",
-    },
   ]);
 
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full divide-y divide-gray-200">
+    <div className="overflow-x-auto blurred-box bg-white  shadow-md rounded-lg">
+      <table className="min-w-full ">
         <thead className="bg-gray-50">
           <tr>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -98,9 +90,6 @@ export default function UserTable() {
                 {user.lastLogin}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <button className="text-blue-600 hover:text-blue-900 mr-3">
-                  Засах
-                </button>
                 <button className="text-red-600 hover:text-red-900">
                   Устгах
                 </button>
@@ -111,4 +100,4 @@ export default function UserTable() {
       </table>
     </div>
   );
-} 
+}

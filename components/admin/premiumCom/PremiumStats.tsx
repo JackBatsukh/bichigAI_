@@ -12,7 +12,7 @@ const stats = [
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       {stats.map((stat, index) => (
         <motion.div
           key={index}
@@ -20,13 +20,17 @@ const stats = [
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: index * 0.1 }}
         >
-          <Card className="p-6 hover:shadow-xl transition-shadow">
-            <h3 className="text-sm font-medium text-gray-500">{stat.title}</h3>
+          <Card className="p-6 bg-[#01081d]/35 border-none hover:bg-[#01081d]/10 hover:shadow-lg transition-shadow ">
+            <h3 className="text-xl font-medium text-gray-200">{stat.title}</h3>
             <div className="mt-2 flex items-baseline">
-              <p className="text-2xl font-semibold text-gray-900">{stat.value}</p>
+              <p className="text-2xl font-semibold text-gray-900">
+                {stat.value}
+              </p>
               <span
                 className={`ml-2 text-sm font-medium ${
-                  stat.changeType === "positive" ? "text-green-600" : "text-red-600"
+                  stat.changeType === "positive"
+                    ? "text-green-400"
+                    : "text-red-600"
                 }`}
               >
                 {stat.change}
