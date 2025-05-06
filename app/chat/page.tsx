@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 
+
 export default function ChatPage() {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<
@@ -35,7 +36,7 @@ export default function ChatPage() {
         method: "POST",
         headers: {
           Authorization:
-            "Bearer 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",
+            "Bearer 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",
           "Content-Type": "application/json",
           "X-Title": "Document AI Chat",
           "HTTP-Referer": "http://localhost:3000",

@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/land/Header";
+import { Providers } from "./providers";
+// import Header from "@/components/land/Header";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Pdf parse",
+  title: "БичигAi",
 };
 
 export default function RootLayout({
@@ -26,8 +27,10 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <Providers>
           <div className="grid-bg" aria-hidden="true" />
-        {children}
+          {children}
+        </Providers>
       </body>
     </html>
   );
