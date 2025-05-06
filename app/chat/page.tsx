@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-
+import { signOut } from "next-auth/react";
 
 export default function ChatPage() {
   const [input, setInput] = useState("");
@@ -89,6 +89,13 @@ export default function ChatPage() {
       setLoading(false);
     }
   };
+  const handleSignOut = async () => {
+    try {
+      await signOut({ callbackUrl: "/" });
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
 
   return (
     <div className="flex flex-col h-screen bg-gradient-to-b from-gray-50 to-gray-100">
@@ -109,6 +116,7 @@ export default function ChatPage() {
           </svg>
           PDF Chat Assistant
         </div>
+        <button onClick={handleSignOut}>Sign out</button>
       </header>
 
       {/* Chat messages */}
