@@ -22,26 +22,16 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    try {
-      const response = await fetch("/api/auth/signin", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
+    const res = await signIn("credentials", {
+      redirect: false,
+      email: formData.email,
+      password: formData.password,
+    });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Login failed");
-      }
-
-      // If login is successful, redirect to home page
+    if (res?.error) {
+      alert(res.error);
+    } else {
       window.location.href = "/";
-    } catch (error) {
-      console.error("Login error:", error);
-      alert(error instanceof Error ? error.message : "Login failed");
     }
   };
 

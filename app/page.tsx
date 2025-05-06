@@ -29,11 +29,11 @@ export default function Home() {
   useEffect(() => {
     if (session) {
       console.log(session);
-      // if (session.user.role == "ADMIN") {
-      //   router.push("/admin/home");
-      // } else {
-      //   router.push("/chat");
-      // }
+      if (session.user.role == "ADMIN") {
+        router.push("/admin/home");
+      } else {
+        router.push("/chat");
+      }
     }
   }, [session, router]);
 

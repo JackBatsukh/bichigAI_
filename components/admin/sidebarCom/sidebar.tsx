@@ -4,6 +4,7 @@ import Link from "next/link";
 import MenuIcon from "./menu";
 import UsersIcon from "./userIcon";
 import AdminPremiumPage from "./Premium";
+import { signOut } from "next-auth/react";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -11,12 +12,18 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
+  const handleSignOut = async () => {
+    try {
+      await signOut({ callbackUrl: "/" });
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  };
   return (
     <div
       className={`${
         isOpen ? "w-64" : "w-20"
-      } bg-gray-800 text-white transition-all duration-300`}
-    >
+      } bg-gray-800 text-white transition-all duration-300`}>
       <div className="flex flex-col w-64 h-screen bg-[#07173C] text-white shadow-lg fixed top-0 left-0">
         <div className="px-6 py-4">
           <h1 className="text-2xl font-bold">БичигAI</h1>
@@ -41,9 +48,11 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
             </Link>
           </div>
         </nav>
-        <h1 className="flex items-center  mb-4 gap-4 block px-4 py-2 rounded hover:bg-red-500 transition">
-          Гарах
-        </h1>
+        <button onClick={handleSignOut}>
+          <h1 className="flex items-center  mb-4 gap-4 block px-4 py-2 rounded hover:bg-red-500 transition">
+            Гарах
+          </h1>
+        </button>
       </div>
     </div>
   );
