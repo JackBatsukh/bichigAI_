@@ -19,7 +19,15 @@ export default function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
     >
       <div className="flex flex-col w-64 h-screen bg-[#07173C] text-white shadow-lg fixed top-0 left-0">
         <div className="px-6 py-4">
-          <h1 className="text-2xl font-bold">БичигAI</h1>
+          <h1
+            className="logo-font text-2xl bg-clip-text text-transparent"
+            style={{
+              backgroundImage:
+                "linear-gradient(-90deg, #508EEA 14%, #FFFFFFF 100%)",
+            }}
+          >
+            БичигAI
+          </h1>
         </div>
         <nav className="flex-1  py-6 space-y-2">
           <div className="flex items-center  mb-4 gap-4 block px-8 py-2 rounded hover:bg-gray-700 transition">

@@ -10,9 +10,10 @@ export default function Header() {
       <div className="mx-auto w-full max-w-7xl flex items-center justify-between px-3 md:px-4">
         <div className="text-xl font-extrabold text-white tracking-wide flex items-center gap-2">
           <Link href="/">
-            <span className="bg-gradient-to-r from-blue-400 to-blue-700 text-transparent bg-clip-text cursor-pointer">
+            {/* <span className="logo-font bg-gradient-to-r from-blue-400 to-blu/e-700 text-transparent bg-clip-text cursor-pointer"> */}
+            <div className="logo-font ">
               БичигAI
-            </span>
+            </div>
           </Link>
         </div>
 
@@ -39,15 +40,13 @@ export default function Header() {
           </div>
         </nav>
         {session ? (
-          <div>garah</div>
-        ) : (
           <Link
             href="/login"
             className="ml-4 px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-lg transition border border-blue-700"
           >
             Нэвтрэх
           </Link>
-        )}
+        ):<div></div>}
       </div>
     </header>
   );
