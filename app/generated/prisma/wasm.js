@@ -110,10 +110,29 @@ Prisma.NullTypes = {
  * Enums
  */
 
+exports.Prisma.UserScalarFieldEnum = {
+  id: 'id',
+  Role: 'Role',
+  name: 'name',
+  email: 'email',
+  password: 'password'
+};
+
 exports.Prisma.DocumentScalarFieldEnum = {
   id: 'id',
-  text: 'text',
+  userId: 'userId',
+  title: 'title',
+  content: 'content',
   createdAt: 'createdAt'
+};
+
+exports.Prisma.PaymentScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  amount: 'amount',
+  status: 'status',
+  createdAt: 'createdAt',
+  expirationDate: 'expirationDate'
 };
 
 exports.Prisma.SortOrder = {
@@ -125,10 +144,15 @@ exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
 };
-
+exports.Role = exports.$Enums.Role = {
+  USER: 'USER',
+  ADMIN: 'ADMIN'
+};
 
 exports.Prisma.ModelName = {
-  Document: 'Document'
+  User: 'User',
+  Document: 'Document',
+  Payment: 'Payment'
 };
 
 /**

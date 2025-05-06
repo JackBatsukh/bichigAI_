@@ -8,25 +8,36 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// model User {
-//   id        String     @id @default(auto()) @map("_id") @db.ObjectId
-//   name      String?
-//   email     String     @unique
-//   password  String
-//   access    Access     @default(Regular)
-//   createdAt DateTime   @default(now())
-//   history   Document[] @relation("UserToDocuments")
-// }
+model User {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  Role      Role       @default(USER)
+  name      String
+  email     String     @unique
+  password  String
+  documents Document[]
+  payments  Payment[] // one-to-many
+}
 
 model Document {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  // userId    String   @db.ObjectId
-  // user      User     @relation("UserToDocuments", fields: [userId], references: [id])
-  text      String
+  userId    String   @db.ObjectId
+  title     String
+  content   String
   createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id])
 }
 
-// enum Access {
-//   Regular
-//   Premium
-// }
+model Payment {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId         String   @db.ObjectId
+  amount         Int
+  status         String
+  createdAt      DateTime @default(now())
+  expirationDate DateTime
+  user           User     @relation(fields: [userId], references: [id])
+}
+
+enum Role {
+  USER
+  ADMIN
+}

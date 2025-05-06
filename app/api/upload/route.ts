@@ -44,7 +44,11 @@ export async function POST(request: NextRequest) {
   }
 
   const document = await prisma.document.create({
-    data: { text: extractedText },
+    data: { 
+      content: extractedText, 
+      title: fileName, 
+      userId: "defaultUser" 
+    },
   });
 
   return NextResponse.json({ document });
