@@ -9,20 +9,27 @@ import {
   FileText,
   Folder,
 } from "lucide-react";
-import GradientBackground from "@/components/ui/gradientbg";
+import Nav from "@/components/upload/nav";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 export default function UploadPage() {
-  const [isProfileOpen, setIsProfileOpen] = useState(false);
+  const router = useRouter();
+  const { data: session, status } = useSession();
   const [activeTab, setActiveTab] = useState("Upload File");
   const [text, setText] = useState("");
   const [isHovering, setIsHovering] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [showFileSelector, setShowFileSelector] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const toggleProfileDropdown = () => {
-    setIsProfileOpen(!isProfileOpen);
-  };
+  // Redirect to login if not authenticated
+  React.useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/login");
+    }
+  }, [status, router]);
 
   const downloadTextAsFile = () => {
     const element = document.createElement("a");
@@ -36,7 +43,8 @@ export default function UploadPage() {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      setSelectedFile(e.target.files[0]);
+      const file = e.target.files[0];
+      setSelectedFile(file);
       setShowFileSelector(false);
     }
   };
@@ -51,39 +59,89 @@ export default function UploadPage() {
     }
   };
 
+  const handleRunAnalyze = async () => {
+    try {
+      setIsLoading(true);
+
+      if (!session?.user?.id) {
+        throw new Error("Please log in to upload files");
+      }
+
+      if (selectedFile) {
+        const formData = new FormData();
+        formData.append("file", selectedFile);
+
+        const res = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!res.ok) {
+          const errorData = await res.json();
+          throw new Error(errorData.error || "Failed to upload file");
+        }
+
+        const data = await res.json();
+
+        if (data.document?.text) {
+          // Store the parsed text and initial AI message
+          localStorage.setItem("pdfText", data.document.text);
+          localStorage.setItem("documentTitle", data.document.title);
+          localStorage.setItem(
+            "initialMessage",
+            `I've uploaded ${data.document.title}. Please analyze this document and provide a summary.`
+          );
+
+          // Redirect to chat
+          router.push("/chat");
+        } else {
+          throw new Error("No text content found in the document");
+        }
+      } else if (text) {
+        // For text input, store directly in localStorage with initial AI message
+        localStorage.setItem("pdfText", text);
+        localStorage.setItem("documentTitle", "Text Analysis");
+        localStorage.setItem(
+          "initialMessage",
+          "I've provided some text for analysis. Please analyze this text and provide a summary."
+        );
+
+        router.push("/chat");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Failed to process the file/text. Please try again."
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Show loading state while checking authentication
+  if (status === "loading") {
+    return (
+      <div className="min-h-screen text-white flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen text-white flex-col">
-      <div className="min-h-screen w-full absolute z-1 blur-shape">
-      </div>
+      <div className="min-h-screen w-full absolute z-1 blur-shape"></div>
       <div className="blur-shape-left"></div>
       <div className="grid-bg"></div>
       <div className="container mx-auto px-4 py-6 z-10 relative">
         {/* Header */}
-        <div className="flex justify-between items-center mb-12">
-          <h1 className="text-blue-400 font-bold text-2xl">БичигAI</h1>
-          <div className="relative">
-            <button
-              onClick={toggleProfileDropdown}
-              className="bg-white bg-opacity-10 rounded-full p-2 hover:bg-opacity-20 transition-all">
-              <User size={24} />
-            </button>
-
-            {isProfileOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-slate-800 rounded-md py-1 z-10 border border-slate-700 shadow-blue">
-                <div className="px-4 py-2 text-sm border-b border-slate-700">
-                  jishee@yahoo.com
-                </div>
-                <button className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-slate-700 transition-colors">
-                  <LogOut size={16} className="mr-2" />
-                  Log out
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
+        <Nav />
 
         {/* Main content */}
-        <div className="flex" style={{ boxShadow: "0 20px 40px rgba(0, 20, 50, 0.8)" }}>
+        <div
+          className="flex"
+          style={{ boxShadow: "0 20px 40px rgba(0, 20, 50, 0.8)" }}>
           {/* Sidebar */}
           <div className="w-64 bg-slate-900 bg-opacity-80 rounded-l-lg">
             <div className="p-4 border-b border-slate-700">
@@ -132,6 +190,7 @@ export default function UploadPage() {
               <>
                 <input
                   type="file"
+                  accept="application/pdf, .docx, .doc"
                   ref={fileInputRef}
                   onChange={handleFileChange}
                   className="hidden"
@@ -143,14 +202,20 @@ export default function UploadPage() {
                         ? "bg-gradient-to-br from-blue-600 to-purple-600 bg-opacity-40 border-blue-400"
                         : "bg-gradient-to-br from-blue-900 to-purple-900 bg-opacity-30 border-blue-500"
                     }`}
-                    style={{ boxShadow: isHovering ? "0 20px 40px rgba(0, 30, 80, 0.8)" : "0 10px 30px rgba(0, 20, 60, 0.7)" }}
+                    style={{
+                      boxShadow: isHovering
+                        ? "0 20px 40px rgba(0, 30, 80, 0.8)"
+                        : "0 10px 30px rgba(0, 20, 60, 0.7)",
+                    }}
                     onMouseEnter={() => setIsHovering(true)}
                     onMouseLeave={() => setIsHovering(false)}
                     onClick={selectedFile ? openFileSelector : selectFile}>
                     {selectedFile ? (
                       <>
                         <FileText size={32} className="mb-4 text-blue-300" />
-                        <p className="text-center mb-1 text-blue-100">{selectedFile.name}</p>
+                        <p className="text-center mb-1 text-blue-100">
+                          {selectedFile.name}
+                        </p>
                         <p className="text-center text-sm text-blue-200">
                           {(selectedFile.size / 1024).toFixed(1)} KB
                         </p>
@@ -160,7 +225,11 @@ export default function UploadPage() {
                       </>
                     ) : (
                       <>
-                        <div className="w-16 h-16 rounded-full bg-blue-600 bg-opacity-50 flex items-center justify-center mb-4" style={{ boxShadow: "0 0 20px rgba(0, 80, 120, 0.7)" }}>
+                        <div
+                          className="w-16 h-16 rounded-full bg-blue-600 bg-opacity-50 flex items-center justify-center mb-4"
+                          style={{
+                            boxShadow: "0 0 20px rgba(0, 80, 120, 0.7)",
+                          }}>
                           <Upload size={32} className="text-blue-200" />
                         </div>
                         <p className="text-center mb-1 text-blue-100 font-medium">
@@ -168,7 +237,11 @@ export default function UploadPage() {
                         </p>
                         <p className="text-center text-blue-200">analyze</p>
                         {isHovering && (
-                          <button className="mt-4 px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-md hover:from-blue-600 hover:to-purple-600 transition-colors text-white font-medium" style={{ boxShadow: "0 5px 20px rgba(0, 30, 70, 0.8)" }}>
+                          <button
+                            className="mt-4 px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-md hover:from-blue-600 hover:to-purple-600 transition-colors text-white font-medium"
+                            style={{
+                              boxShadow: "0 5px 20px rgba(0, 30, 70, 0.8)",
+                            }}>
                             Select File
                           </button>
                         )}
@@ -176,9 +249,13 @@ export default function UploadPage() {
                     )}
                   </div>
                 ) : (
-                  <div className="border-2 border-blue-500 rounded-md h-80 p-4 bg-gradient-to-br from-blue-900 to-purple-900 bg-opacity-30" style={{ boxShadow: "0 10px 30px rgba(0, 20, 60, 0.7)" }}>
+                  <div
+                    className="border-2 border-blue-500 rounded-md h-80 p-4 bg-gradient-to-br from-blue-900 to-purple-900 bg-opacity-30"
+                    style={{ boxShadow: "0 10px 30px rgba(0, 20, 60, 0.7)" }}>
                     <div className="flex justify-between items-center mb-4 pb-2 border-b border-blue-700">
-                      <h3 className="font-medium text-blue-200">Select a file</h3>
+                      <h3 className="font-medium text-blue-200">
+                        Select a file
+                      </h3>
                       <button
                         onClick={() => setShowFileSelector(false)}
                         className="text-blue-300 hover:text-white">
@@ -195,9 +272,11 @@ export default function UploadPage() {
                         <p className="text-blue-100">Computer</p>
                       </div>
 
-                      <div 
+                      <div
                         className="flex flex-col items-center justify-center p-4 border border-blue-700 rounded-md hover:bg-blue-700 hover:bg-opacity-30 cursor-pointer bg-blue-800 bg-opacity-20"
-                        style={{ boxShadow: "0 5px 15px rgba(0, 128, 255, 1)" }}>
+                        style={{
+                          boxShadow: "0 5px 15px rgba(0, 128, 255, 1)",
+                        }}>
                         <Folder size={40} className="mb-2 text-blue-300" />
                         <p className="text-blue-100">Desktop</p>
                       </div>
@@ -206,7 +285,9 @@ export default function UploadPage() {
                 )}
               </>
             ) : (
-              <div className="border border-slate-700 rounded-md h-80 flex flex-col bg-blue-950 bg-opacity-20" style={{ boxShadow: "0 10px 30px rgba(0, 64, 255, 1)" }}>
+              <div
+                className="border border-slate-700 rounded-md h-80 flex flex-col bg-blue-950 bg-opacity-20"
+                style={{ boxShadow: "0 10px 30px rgba(0, 64, 255, 1)" }}>
                 <textarea
                   className="w-full h-full p-4 bg-slate-800 rounded-md resize-none focus:outline-none focus:ring-1 focus:ring-blue-400"
                   placeholder="Enter your text here for analysis..."
@@ -234,10 +315,11 @@ export default function UploadPage() {
             </div>
 
             {/* Run button */}
-            <button 
-              className="mt-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-md py-3 w-full hover:from-blue-700 hover:to-purple-700 transition-colors"
-              >
-              Run analyze
+            <button
+              className="mt-6 bg-gradient-to-r from-blue-600 to-purple-600 rounded-md py-3 w-full hover:from-blue-700 hover:to-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={(!selectedFile && !text) || isLoading}
+              onClick={handleRunAnalyze}>
+              {isLoading ? "Processing..." : "Run analyze"}
             </button>
           </div>
         </div>

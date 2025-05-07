@@ -19,7 +19,7 @@ export default function Home() {
       if (session.user.role == "ADMIN") {
         router.push("/admin/home");
       } else {
-        router.push("/chat");
+        router.push("/upload");
       }
     }
   }, [session, router]);

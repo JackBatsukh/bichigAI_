@@ -1,4 +1,4 @@
-import NextAuth from "next-auth";
+import NextAuth, { AuthOptions, User as NextAuthUser } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaClient } from "@/app/generated/prisma";
 import { DefaultSession } from "next-auth";
@@ -25,7 +25,7 @@ declare module "next-auth/jwt" {
 
 const prisma = new PrismaClient();
 
-const handler = NextAuth({
+export const authOptions: AuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -38,9 +38,12 @@ const handler = NextAuth({
           where: { email: credentials?.email },
         });
 
-        if (user && await bcrypt.compare(credentials!.password, user.password)) {
+        if (
+          user &&
+          (await bcrypt.compare(credentials!.password, user.password))
+        ) {
           const { password, ...userWithoutPassword } = user;
-          return userWithoutPassword;
+          return userWithoutPassword as NextAuthUser;
         }
         return null;
       },
@@ -102,6 +105,8 @@ const handler = NextAuth({
       return token;
     },
   },
-});
+};
+
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
