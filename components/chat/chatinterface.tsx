@@ -3,81 +3,48 @@
 import { useState, useEffect, useRef } from "react";
 import MessageItem from "./chatitems";
 import ChatInput from "./chatinput";
-import LanguageSelector from "./languageselector";
 import { Message } from "../../lib/types";
 import Nav from "../upload/nav";
 
 export default function ChatInterface() {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState("en");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isNearBottom, setIsNearBottom] = useState(true);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
-  // Load chat history and check for initial message
   useEffect(() => {
-    // const savedMessages = localStorage.getItem("chatMessages");
     const savedLanguage = localStorage.getItem("selectedLanguage");
-
     if (savedLanguage) {
       setSelectedLanguage(savedLanguage);
     }
 
-    // if (savedMessages) {
-    //   setMessages(JSON.parse(savedMessages));
-    // }
-
-    // Check for initial message from upload
     const initialMessage = localStorage.getItem("initialMessage");
     if (initialMessage) {
-      // Add the initial message
-      const newMessage: Message = {
-        role: "user",
-        content: initialMessage,
-      };
+      const newMessage: Message = { role: "user", content: initialMessage };
       setMessages((prev) => [...prev, newMessage]);
-
-      // Clear the initial message
       localStorage.removeItem("initialMessage");
-
-      // Automatically send to AI
       handleSendMessage(initialMessage);
     }
   }, []);
 
-  // Save messages to localStorage whenever they change
-  // useEffect(() => {
-  //   localStorage.setItem("chatHistory", JSON.stringify(messages));
-  // }, [messages]);
-
-  // Handle auto-scrolling when messages change or loading state changes
   useEffect(() => {
-    if (isNearBottom) {
-      scrollToBottom();
-    }
-  }, [messages, isLoading, isNearBottom]);
+    if (isNearBottom) scrollToBottom();
+  }, [messages, isLoading]);
 
-  // Function to scroll to bottom
   const scrollToBottom = () => {
     if (chatContainerRef.current) {
-      const scrollOptions = {
-        top: chatContainerRef.current.scrollHeight,
-        behavior: "smooth" as ScrollBehavior,
-      };
-      chatContainerRef.current.scrollTo(scrollOptions);
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
     }
   };
 
-  // Handle scroll events to determine if user manually scrolled up
   const handleScroll = () => {
     if (chatContainerRef.current) {
       const { scrollTop, scrollHeight, clientHeight } =
         chatContainerRef.current;
-      // If we're near the bottom (within 150px), enable auto-scrolling
-      const isNearBottom = scrollHeight - scrollTop - clientHeight < 150;
-      setIsNearBottom(isNearBottom);
+      setIsNearBottom(scrollHeight - scrollTop - clientHeight < 150);
     }
   };
 
@@ -99,11 +66,9 @@ export default function ChatInterface() {
           Authorization:
             "Bearer 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",
           "Content-Type": "application/json",
-          "X-Title": "Document AI Chat",
-          "HTTP-Referer": "http://localhost:3000",
         },
         body: JSON.stringify({
-          model: "deepseek/deepseek-r1-zero:free",
+          model: "google/gemma-3-27b-it:free",
           messages: [
             {
               role: "system",
@@ -117,108 +82,112 @@ export default function ChatInterface() {
             },
             ...messages,
             newMessage,
-          ].map((msg) => ({
-            role: msg.role,
-            content: msg.content,
-          })),
+          ].map((m) => ({ role: m.role, content: m.content })),
         }),
       });
 
       if (!res.ok) {
-        throw new Error("Failed to get response");
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(
+          errorData.error || `API request failed with status ${res.status}`
+        );
       }
 
       const data = await res.json();
+      console.log("API Response:", data); // Debug log to see the actual response
 
-      if (!data.choices?.[0]?.message?.content) {
-        throw new Error("Invalid response");
+      // More detailed validation of the response structure
+      if (!data || typeof data !== "object") {
+        throw new Error("Invalid API response: response is not an object");
       }
 
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: data.choices[0].message.content },
-      ]);
+      // Check if the response has the expected structure
+      if (!data.choices) {
+        console.error("API Response missing choices:", data);
+        throw new Error("Invalid API response: missing choices field");
+      }
 
-      localStorage.setItem(
-        "chatMessages",
-        JSON.stringify([
-          ...messages,
-          newMessage,
-          { role: "assistant", content: data.choices[0].message.content },
-        ])
-      );
+      // Ensure choices is an array and has at least one item
+      if (!Array.isArray(data.choices) || data.choices.length === 0) {
+        console.error("Invalid choices format:", data.choices);
+        throw new Error(
+          "Invalid API response: choices must be a non-empty array"
+        );
+      }
+
+      const firstChoice = data.choices[0];
+      if (!firstChoice || typeof firstChoice !== "object") {
+        console.error("Invalid first choice format:", firstChoice);
+        throw new Error("Invalid API response: first choice is not an object");
+      }
+
+      const message = firstChoice.message;
+      if (!message || typeof message !== "object") {
+        console.error("Invalid message format:", message);
+        throw new Error("Invalid API response: message is not an object");
+      }
+
+      if (!message.content || typeof message.content !== "string") {
+        console.error("Invalid message content:", message.content);
+        throw new Error(
+          "Invalid API response: message content is not a string"
+        );
+      }
+
+      const reply = message.content;
+      setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
     } catch (error) {
+      console.error("Chat API Error:", error);
+      const errorMessage =
+        selectedLanguage === "mn"
+          ? "Уучлаарай, хариулт өгөх боломжгүй байна. Дахин оролдоно уу."
+          : "Sorry, I couldn't process that. Please try again.";
+
       setMessages((prev) => [
         ...prev,
-        {
-          role: "assistant",
-          content:
-            selectedLanguage === "mn"
-              ? "Уучлаарай, хариулт өгөх боломжгүй байна. Дахин оролдоно уу."
-              : "Sorry, I couldn't process that. Please try again.",
-        },
+        { role: "assistant", content: errorMessage },
       ]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Clear chat history
-  const clearHistory = () => {
-    setMessages([]);
-    localStorage.removeItem("chatHistory");
-  };
-
   return (
-    <div className="min-h-screen text-white p-6 relative">
-      {/* Background grid lines */}
-      <div className="absolute inset-0 grid grid-cols-12 grid-rows-6 pointer-events-none">
-        {Array(12)
-          .fill(0)
-          .map((_, i) => (
-            <div key={`col-${i}`} className="border-r border-blue-900/20"></div>
-          ))}
-        {Array(6)
-          .fill(0)
-          .map((_, i) => (
-            <div key={`row-${i}`} className="border-b border-blue-900/20"></div>
-          ))}
-      </div>
-
-      {/* Random pink gradient blur-shape spots */}
-
-      <div className="max-w-[1440px] mx-auto relative z-10">
+    <div className="min-h-screen p-6 text-white  relative">
+      <div className="max-w-[1440px] mx-auto relative z-10 flex flex-col">
         <Nav />
 
-        <div className="bg-black/30 border border-blue-900/30 rounded-lg h-fit max-h-[950px] shadow-xl p-6 mt-[100px]">
+        <div className="flex flex-col  border border-blue-900/30 bg-black/30 rounded-lg shadow-xl max-h-[80vh] h-[80vh] overflow-hidden">
           <div
             ref={chatContainerRef}
             onScroll={handleScroll}
-            className="border border-blue-800/30 rounded-lg p-4 mb-6 h-[600px] overflow-y-auto bg-black/20 shadow-lg">
+            className="flex-1 overflow-y-auto p-4 space-y-4  border-b border-blue-800/30">
             {messages.length === 0 ? (
               <div className="flex items-center justify-center h-full text-gray-400">
-                No messages yet. Start a conversation!
+                {selectedLanguage === "mn"
+                  ? "Харилцаа эхлээгүй байна. Яриа эхлүүлнэ үү!"
+                  : "No messages yet. Start a conversation!"}
               </div>
             ) : (
-              <div className="space-y-4">
-                {messages.map((message, index) => (
-                  <MessageItem key={index} message={message} />
-                ))}
-              </div>
+              messages.map((message, index) => (
+                <MessageItem key={index} message={message} />
+              ))
             )}
 
             {isLoading && (
-              <div className="flex justify-center items-center py-4">
-                <div className="animate-pulse flex items-center space-x-2">
-                  <div className="h-2 w-2 bg-blue-400 rounded-full"></div>
-                  <div className="h-2 w-2 bg-blue-400 rounded-full animate-pulse delay-75"></div>
-                  <div className="h-2 w-2 bg-blue-400 rounded-full animate-pulse delay-150"></div>
+              <div className="flex justify-center py-4">
+                <div className="animate-pulse flex space-x-2">
+                  <div className="h-2 w-2 bg-blue-400 rounded-full" />
+                  <div className="h-2 w-2 bg-blue-400 rounded-full animate-pulse delay-75" />
+                  <div className="h-2 w-2 bg-blue-400 rounded-full animate-pulse delay-150" />
                 </div>
               </div>
             )}
           </div>
 
-          <ChatInput onSendMessage={handleSendMessage} disabled={isLoading} />
+          <div className="p-4">
+            <ChatInput onSendMessage={handleSendMessage} disabled={isLoading} />
+          </div>
         </div>
       </div>
     </div>
