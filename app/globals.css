@@ -28,7 +28,24 @@ body {
   pointer-events: none;
   z-index: -1;
 }
-
+.blur-shape-budeg {
+  position: absolute;
+  width: 500px;
+  height: 500px;
+  top: 0;
+  left: 90%;
+  transform: translateX(-50%);
+  background: radial-gradient(
+    circle at center,
+    rgba(0, 255, 255, 0.4),
+    rgba(0, 128, 255, 0.3),
+    rgba(0, 0, 128, 0)
+  );
+  filter: blur(100px);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: -1;
+}
 .blur-shape-left {
   position: absolute;
   width: 500px;
