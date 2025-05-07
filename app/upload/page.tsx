@@ -22,6 +22,7 @@ export default function UploadPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [showFileSelector, setShowFileSelector] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState("en");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Redirect to login if not authenticated
@@ -87,9 +88,12 @@ export default function UploadPage() {
           // Store the parsed text and initial AI message
           localStorage.setItem("pdfText", data.document.text);
           localStorage.setItem("documentTitle", data.document.title);
+          localStorage.setItem("selectedLanguage", selectedLanguage);
           localStorage.setItem(
             "initialMessage",
-            `I've uploaded ${data.document.title}. Please analyze this document and provide a summary.`
+            selectedLanguage === "mn"
+              ? `${data.document.title} баримт бичгийг тайлбарлана уу.`
+              : `Please analyze this document: ${data.document.title}`
           );
 
           // Redirect to chat
@@ -101,9 +105,12 @@ export default function UploadPage() {
         // For text input, store directly in localStorage with initial AI message
         localStorage.setItem("pdfText", text);
         localStorage.setItem("documentTitle", "Text Analysis");
+        localStorage.setItem("selectedLanguage", selectedLanguage);
         localStorage.setItem(
           "initialMessage",
-          "I've provided some text for analysis. Please analyze this text and provide a summary."
+          selectedLanguage === "mn"
+            ? "Энэ текстийг тайлбарлана уу."
+            : "Please analyze this text."
         );
 
         router.push("/chat");
@@ -308,9 +315,12 @@ export default function UploadPage() {
 
             {/* Language selector */}
             <div className="mt-6">
-              <select className="bg-slate-900 border border-slate-700 rounded-md px-4 py-2 w-32">
-                <option>English</option>
-                <option>Монгол</option>
+              <select
+                className="bg-slate-900 border border-slate-700 rounded-md px-4 py-2 w-32"
+                value={selectedLanguage}
+                onChange={(e) => setSelectedLanguage(e.target.value)}>
+                <option value="en">English</option>
+                <option value="mn">Монгол</option>
               </select>
             </div>
 

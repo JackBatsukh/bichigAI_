@@ -11,16 +11,23 @@ export default function ChatInterface() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState("en");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isNearBottom, setIsNearBottom] = useState(true);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
   // Load chat history and check for initial message
   useEffect(() => {
-    const savedMessages = localStorage.getItem("chatMessages");
-    if (savedMessages) {
-      setMessages(JSON.parse(savedMessages));
+    // const savedMessages = localStorage.getItem("chatMessages");
+    const savedLanguage = localStorage.getItem("selectedLanguage");
+
+    if (savedLanguage) {
+      setSelectedLanguage(savedLanguage);
     }
+
+    // if (savedMessages) {
+    //   setMessages(JSON.parse(savedMessages));
+    // }
 
     // Check for initial message from upload
     const initialMessage = localStorage.getItem("initialMessage");
@@ -41,9 +48,9 @@ export default function ChatInterface() {
   }, []);
 
   // Save messages to localStorage whenever they change
-  useEffect(() => {
-    localStorage.setItem("chatHistory", JSON.stringify(messages));
-  }, [messages]);
+  // useEffect(() => {
+  //   localStorage.setItem("chatHistory", JSON.stringify(messages));
+  // }, [messages]);
 
   // Handle auto-scrolling when messages change or loading state changes
   useEffect(() => {
@@ -90,18 +97,22 @@ export default function ChatInterface() {
         method: "POST",
         headers: {
           Authorization:
-            "Bearer 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",
+            "Bearer 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",
           "Content-Type": "application/json",
           "X-Title": "Document AI Chat",
           "HTTP-Referer": "http://localhost:3000",
         },
         body: JSON.stringify({
-          model: "google/gemma-2-9b-it:free",
+          model: "deepseek/deepseek-r1-zero:free",
           messages: [
             {
               role: "system",
               content: pdfText
-                ? `You are analyzing a document titled "${documentTitle}". Here is the content:\n\n${pdfText}\n\nPlease provide detailed and accurate responses based on this content. If the user asks about the document, use this content to answer their questions.`
+                ? selectedLanguage === "mn"
+                  ? `Та "${documentTitle}" баримт бичгийг шинжилж байна. Энэ бол агуулга:\n\n${pdfText}\n\nЭнэ агуулгад үндэслэн дэлгэрэнгүй, үнэн зөв хариулт өгнө үү. Хэрэглэгч баримт бичгийн талаар асуувал, энэ агуулгыг ашиглан хариулна уу.`
+                  : `You are analyzing a document titled "${documentTitle}". Here is the content:\n\n${pdfText}\n\nPlease provide detailed and accurate responses based on this content. If the user asks about the document, use this content to answer their questions.`
+                : selectedLanguage === "mn"
+                ? "Та тусламж үзүүлэх AI ассистент юм. Дэлгэрэнгүй, үнэн зөв хариулт өгнө үү."
                 : "You are a helpful AI assistant. Please provide detailed and accurate responses.",
             },
             ...messages,
@@ -141,7 +152,10 @@ export default function ChatInterface() {
         ...prev,
         {
           role: "assistant",
-          content: "Sorry, I couldn't process that. Please try again.",
+          content:
+            selectedLanguage === "mn"
+              ? "Уучлаарай, хариулт өгөх боломжгүй байна. Дахин оролдоно уу."
+              : "Sorry, I couldn't process that. Please try again.",
         },
       ]);
     } finally {
