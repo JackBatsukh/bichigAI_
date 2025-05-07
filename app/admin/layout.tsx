@@ -37,6 +37,7 @@ export default function AdminLayout({
             className="absolute inset-0 bg-[radial-gradient(circle,rgba(0,0,0,0.05)_1.2px,transparent_1px)] [background-size:20px_20px] z-0"
             aria-hidden="true"
           />
+          <div className="grid-bg-admin" aria-hidden="true" />
           <div className="relative max-w-7xl mx-auto z-10">{children}</div>
         </main>
       </div>

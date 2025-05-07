@@ -10,7 +10,7 @@ export default function PremiumPage() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="space-y-6 mt-10"
+      className="space-y-6 mt-10 text-black"
     >
       <PremiumStats />
       <motion.div

@@ -1,4 +1,4 @@
-'use client'
+"use client";
 import UserTable from "@/components/admin/usersCom/UserTable";
 import { motion } from "framer-motion";
 
@@ -10,7 +10,6 @@ export default function UsersPage() {
       transition={{ duration: 0.5 }}
       className="space-y-6 mt-10"
     >
-     
       <motion.div
         initial={{ y: 20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}

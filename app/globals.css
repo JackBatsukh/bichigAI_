@@ -3,7 +3,13 @@
 html {
   scroll-behavior: smooth;
 }
-
+@font-face {
+  font-family: "ADVERGOTHIC";
+  src: url("/fonts/ADVERGOTHIC.TTF") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
 body {
   @apply bg-[#000014] min-h-screen text-white relative overflow-x-hidden;
   background-attachment: fixed;
@@ -80,6 +86,18 @@ body {
   background-size: 80px 80px;
   animation: gridMove 20s linear infinite;
 }
+.grid-bg-admin {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.13) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 17, 17, 0.13) 1px, transparent 1px);
+  background-size: 80px 80px;
+  animation: gridMove 20s linear infinite;
+}
 
 body:has(.login-page) {
   background: linear-gradient(
@@ -94,15 +112,14 @@ body:has(.login-page) {
   animation: gradient 20s ease infinite;
 }
 
-/* Register page gradient */
 .bg-gradient-custom {
   background: linear-gradient(
     -45deg,
-    #000000, /* Black */
-    #020817, /* Dark blue */
-    #051230, /* Deeper blue */
-    #000000, /* Black */
-    #01081d /* Dark blue */
+    #000000,
+    /* Black */ #020817,
+    /* Dark blue */ #051230,
+    /* Deeper blue */ #000000,
+    /* Black */ #01081d /* Dark blue */
   );
   background-size: 300% 300%;
 }
@@ -134,19 +151,40 @@ body:has(.login-page) {
   pointer-events: none;
 }
 
-/* Glass effect improvements */
 .backdrop-blur-sm {
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   background-color: rgba(1, 4, 16, 0.7);
 }
 
-/* Smooth transitions */
+.animate-blob {
+  animation: blob 7s infinite;
+}
+
+.animation-delay-2000 {
+  animation-delay: 2s;
+}
+
+.animation-delay-4000 {
+  animation-delay: 4s;
+}
+
+.glass {
+  @apply bg-white/10 backdrop-blur-xl rounded-2xl border border-white/20 shadow-2xl;
+}
+
+.logo-font {
+  font-family: "ADVERGOTHIC", sans-serif;
+  background: linear-gradient(90deg, #508eea 14%, #ffffff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
 * {
   transition: all 0.2s ease-in-out;
 }
 
-/* Drop shadow with darker colors */
 .shadow-bottom {
   box-shadow: 0 8px 16px rgba(0, 0, 60, 0.7);
 }
