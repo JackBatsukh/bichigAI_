@@ -3,9 +3,12 @@
 import React, { useState } from "react";
 import { User, LogOut, Sparkles, CreditCard } from "lucide-react";
 import { signOut } from "next-auth/react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useSession } from "next-auth/react";
+import { motion } from "framer-motion";
 
 const Nav = () => {
+  const { data: session } = useSession();
+  console.log(session);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [showPremiumModal, setShowPremiumModal] = useState(false);
   const [isPremiumClicked, setIsPremiumClicked] = useState(false); // Track if Premium was clicked
@@ -45,58 +48,23 @@ const Nav = () => {
       <div className="relative">
         <button
           onClick={toggleProfileDropdown}
-          className="bg-white bg-opacity-10 rounded-full p-2 hover:bg-opacity-20 transition-all transform hover:scale-110 duration-200"
-        >
+          className=" bg-opacity-10 rounded-full p-2 hover:bg-opacity-20 transition-all">
           <User size={24} />
         </button>
 
-        <AnimatePresence>
-          {isProfileOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.2 }}
-              className="absolute right-0 mt-2 w-48 bg-slate-800 rounded-md py-1 z-10 border border-slate-700 shadow-lg"
-            >
-              <div className="px-4 py-3 text-sm border-b border-slate-700 flex items-center">
-                <span className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white mr-2">
-                  {String("jishee@yahoo.com").charAt(0).toUpperCase()}
-                </span>
-                <div>
-                  <div className="font-medium">jishee@yahoo.com</div>
-                  <div className="text-xs text-slate-400">Free Plan</div>
-                </div>
-              </div>
-
-              {/* Premium option in dropdown */}
-              <motion.button
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-slate-700 transition-colors group"
-                onClick={handlePremiumClick}
-                initial={{ scale: 1 }}
-                animate={{ scale: isPremiumClicked ? 1.1 : 1 }} // Add scale effect when clicked
-                whileHover={{
-                  scale: 1.05, // Hover effect
-                  boxShadow: "0 0 10px rgba(255, 215, 0, 0.7)", // Subtle glowing effect
-                }}
-                transition={{ duration: 0.2 }}
-              >
-                <CreditCard size={16} className="mr-2 text-purple-400" />
-                <span>Purchase Premium</span>
-                <Sparkles size={12} className="ml-2 text-yellow-400" />
-              </motion.button>
-
-              {/* Logout option */}
-              <button
-                className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-slate-700 transition-colors"
-                onClick={handleSignOut}
-              >
-                <LogOut size={16} className="mr-2" />
-                <span>Log out</span>
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {isProfileOpen && (
+          <div className="absolute right-0 mt-2 w-48 bg-slate-800 rounded-md py-1 z-10 border border-slate-700 shadow-blue">
+            <div className="px-4 py-2 text-sm border-b border-slate-700">
+              {session?.user.email}
+            </div>
+            <button
+              className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-slate-700 transition-colors"
+              onClick={handleSignOut}>
+              <LogOut size={16} className="mr-2" />
+              Log out
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Premium Purchase Modal */}

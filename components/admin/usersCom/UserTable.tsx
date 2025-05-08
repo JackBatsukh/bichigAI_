@@ -1,27 +1,44 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface User {
   id: string;
   name: string;
   email: string;
-  role: string;
+  Role: string;
   status: "active" | "inactive";
   lastLogin: string;
 }
 
 export default function UserTable() {
-  const [users, setUsers] = useState<User[]>([
-    {
-      id: "1",
-      name: "Болд Баатар",
-      email: "bold@example.com",
-      role: "Админ",
-      status: "active",
-      lastLogin: "2024-05-01 14:30",
-    },
-  ]);
+  const [users, setUsers] = useState<User[]>([]);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const res = await fetch("/api/user");
+      const data = await res.json();
+      setUsers(data);
+    };
+
+    fetchUsers();
+  }, []);
+
+  const handleDeleteUser = async (id: string) => {
+    const res = await fetch("/api/user/delete", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ id }),
+    });
+
+    if (res.ok) {
+      setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
+    } else {
+      console.error("Failed to delete user");
+    }
+  };
 
   return (
     <div className="overflow-x-auto blurred-box bg-white  shadow-md rounded-lg">
@@ -72,7 +89,7 @@ export default function UserTable() {
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
                 <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
-                  {user.role}
+                  {user.Role}
                 </span>
               </td>
               <td className="px-6 py-4 whitespace-nowrap">
@@ -81,8 +98,7 @@ export default function UserTable() {
                     user.status === "active"
                       ? "bg-green-100 text-green-800"
                       : "bg-red-100 text-red-800"
-                  }`}
-                >
+                  }`}>
                   {user.status === "active" ? "Идэвхтэй" : "Идэвхгүй"}
                 </span>
               </td>
@@ -90,7 +106,9 @@ export default function UserTable() {
                 {user.lastLogin}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <button className="text-red-600 hover:text-red-900">
+                <button
+                  className="text-red-600 hover:text-red-900"
+                  onClick={() => handleDeleteUser(user.id)}>
                   Устгах
                 </button>
               </td>

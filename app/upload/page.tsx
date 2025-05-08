@@ -25,7 +25,6 @@ export default function UploadPage() {
   const [selectedLanguage, setSelectedLanguage] = useState("en");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Redirect to login if not authenticated
   React.useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/login");
@@ -85,7 +84,6 @@ export default function UploadPage() {
         const data = await res.json();
 
         if (data.document?.text) {
-          // Store the parsed text and initial AI message
           localStorage.setItem("pdfText", data.document.text);
           localStorage.setItem("documentTitle", data.document.title);
           localStorage.setItem("selectedLanguage", selectedLanguage);
@@ -96,13 +94,11 @@ export default function UploadPage() {
               : `Please analyze this document: ${data.document.title}`
           );
 
-          // Redirect to chat
           router.push("/chat");
         } else {
           throw new Error("No text content found in the document");
         }
       } else if (text) {
-        // For text input, store directly in localStorage with initial AI message
         localStorage.setItem("pdfText", text);
         localStorage.setItem("documentTitle", "Text Analysis");
         localStorage.setItem("selectedLanguage", selectedLanguage);
