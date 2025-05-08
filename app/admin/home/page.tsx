@@ -4,11 +4,12 @@ import DashboardStats from "@/components/admin/homeCom/DashboardStats";
 import RecentActivity from "@/components/admin/homeCom/RecentActivity";
 import UsageChart from "@/components/admin/homeCom/UsageChart";
 import { useSession } from "next-auth/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function AdminHomePage() {
   const { data: session } = useSession();
+  
 
   const router = useRouter();
 
@@ -17,6 +18,9 @@ export default function AdminHomePage() {
       router.push("/");
     }
   }, [session]);
+
+  
+
 
   return (
     <motion.div

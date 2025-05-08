@@ -64,11 +64,11 @@ export default function ChatInterface() {
         method: "POST",
         headers: {
           Authorization:
-            "Bearer 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",
+            "Bearer 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",
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "google/gemma-3-27b-it:free",
+          model: "microsoft/phi-4-reasoning-plus:free",
           messages: [
             {
               role: "system",

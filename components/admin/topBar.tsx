@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-
 export default function TopBar() {
   const [searchQuery, setSearchQuery] = useState("");
   const router = useRouter();
@@ -42,8 +41,7 @@ export default function TopBar() {
                     className="h-5 w-5 text-gray-400"
                     fill="none"
                     stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
+                    viewBox="0 0 24 24">
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
@@ -54,12 +52,7 @@ export default function TopBar() {
                 </div>
               </div>
             </form>
-            <div className="bg-blue-500 text-white w-[40px] h-[40px] rounded-[100px] items-center justify-center flex">
-              Jack
-            </div>
           </div>
-
-         
         </div>
       </div>
     </div>
