@@ -44,18 +44,23 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="space-y-8 bg-black/20 p-8 rounded-2xl backdrop-blur-sm border border-white/10">
+    <div className="space-y-6 bg-black/20 p-6 sm:p-8 rounded-2xl backdrop-blur-sm border border-white/10 w-full max-w-md mx-auto">
       <div className="text-center">
-        <h1 className="text-2xl font-bold text-blue-500 mb-2">Welcome Back</h1>
-        <p className="text-gray-400">Sign in to continue to BichigAI</p>
+        <h1 className="text-xl sm:text-2xl font-bold text-blue-500 mb-2">
+          Welcome Back
+        </h1>
+        <p className="text-gray-400 text-sm sm:text-base">
+          Sign in to continue to BichigAI
+        </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-5">
         <div className="space-y-4">
           <div>
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-gray-300 mb-1">
+              className="block text-sm font-medium text-gray-300 mb-1"
+            >
               Email
             </label>
             <input
@@ -65,7 +70,7 @@ export default function LoginPage() {
               placeholder="Enter your email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full p-3 border border-gray-600 rounded-lg bg-black/20 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition text-white placeholder-gray-500"
+              className="w-full p-2.5 sm:p-3 border border-gray-600 rounded-lg bg-black/20 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition text-white placeholder-gray-500 text-sm sm:text-base"
               required
             />
           </div>
@@ -73,7 +78,8 @@ export default function LoginPage() {
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-gray-300 mb-1">
+              className="block text-sm font-medium text-gray-300 mb-1"
+            >
               Password
             </label>
             <input
@@ -83,7 +89,7 @@ export default function LoginPage() {
               placeholder="Enter your password"
               value={formData.password}
               onChange={handleChange}
-              className="w-full p-3 border border-gray-600 rounded-lg bg-black/20 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition text-white placeholder-gray-500"
+              className="w-full p-2.5 sm:p-3 border border-gray-600 rounded-lg bg-black/20 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none transition text-white placeholder-gray-500 text-sm sm:text-base"
               required
             />
           </div>
@@ -91,7 +97,8 @@ export default function LoginPage() {
 
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors">
+          className="w-full bg-blue-600 text-white py-2.5 sm:py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors text-sm sm:text-base"
+        >
           Sign in
         </button>
 
@@ -109,19 +116,21 @@ export default function LoginPage() {
         <button
           type="button"
           onClick={handleGoogleSignIn}
-          className="w-full flex items-center justify-center gap-3 border border-gray-600 py-3 rounded-lg font-medium hover:bg-white/5 transition-colors text-white">
+          className="w-full flex items-center justify-center gap-2 sm:gap-3 border border-gray-600 py-2.5 sm:py-3 rounded-lg font-medium hover:bg-white/5 transition-colors text-white text-sm sm:text-base"
+        >
           <Image
             src="/google-icon.svg"
-            width={20}
-            height={20}
+            width={18}
+            height={18}
             alt="Google logo"
+            className="sm:w-5 sm:h-5"
           />
           Sign in with Google
         </button>
       </form>
 
-      <p className="text-center text-gray-400">
-        Don't have an account?{" "}
+      <p className="text-center text-gray-400 text-sm sm:text-base">
+        Don&apos;t have an account?{" "}
         <Link href="/register" className="text-blue-500 hover:underline">
           Sign up
         </Link>
