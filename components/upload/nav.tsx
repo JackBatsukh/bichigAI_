@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
 
 const Nav = () => {
   const { data: session } = useSession();
-  console.log(session);
+  // console.log(session);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [showPremiumModal, setShowPremiumModal] = useState(false);
   const [isPremiumClicked, setIsPremiumClicked] = useState(false); // Track if Premium was clicked
@@ -59,6 +59,12 @@ const Nav = () => {
             </div>
             <button
               className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-slate-700 transition-colors"
+              onClick={handlePremiumClick}>
+              <CreditCard size={16} className="mr-2" />
+              Premium
+            </button>
+            <button
+              className="flex items-center w-full text-left px-4 py-2 text-sm hover:bg-slate-700 transition-colors"
               onClick={handleSignOut}>
               <LogOut size={16} className="mr-2" />
               Log out
@@ -74,19 +80,16 @@ const Nav = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-        >
+          transition={{ duration: 0.3 }}>
           <motion.div
             className="bg-slate-800 border border-slate-700 rounded-lg p-6 max-w-md w-full mx-4 relative"
             initial={{ y: 50 }}
             animate={{ y: 0 }}
             exit={{ y: 50 }}
-            transition={{ duration: 0.4 }}
-          >
+            transition={{ duration: 0.4 }}>
             <button
               onClick={closePremiumModal}
-              className="absolute top-4 right-4 text-gray-400 hover:text-white"
-            >
+              className="absolute top-4 right-4 text-gray-400 hover:text-white">
               ✕
             </button>
             <div className="flex items-center mb-4">
@@ -101,8 +104,7 @@ const Nav = () => {
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className="text-black"
-                >
+                  className="text-black">
                   <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2z" />
                 </svg>
               </span>
@@ -120,12 +122,12 @@ const Nav = () => {
               </p>
 
               <div className="bg-slate-700 rounded-lg p-4 mb-4">
-                <h3 className="font-medium text-white mb-2">
-                  Дансны мэдээлэл
-                </h3>
+                <h3 className="font-medium text-white mb-2">Дансны мэдээлэл</h3>
                 <p className="text-white/80 text-sm">
-                  Банк: Хаан Банк<br />
-                  Дансны дугаар: 5619400116<br />
+                  Банк: Хаан Банк
+                  <br />
+                  Дансны дугаар: 5619400116
+                  <br />
                   Хүлээн авагч: БичигAI ХХК
                 </p>
               </div>
@@ -154,14 +156,12 @@ const Nav = () => {
                   scale: 1.05,
                   boxShadow: "0 0 15px rgba(255, 215, 0, 0.9)",
                 }}
-                transition={{ duration: 0.2 }}
-              >
+                transition={{ duration: 0.2 }}>
                 Баталгаажуулах
               </motion.button>
               <button
                 onClick={closePremiumModal}
-                className="w-full py-2 bg-transparent border border-slate-600 hover:bg-slate-700 text-white font-medium rounded"
-              >
+                className="w-full py-2 bg-transparent border border-slate-600 hover:bg-slate-700 text-white font-medium rounded">
                 Цуцлах
               </button>
             </div>

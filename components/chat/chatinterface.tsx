@@ -28,16 +28,16 @@ export default function ChatInterface() {
       localStorage.removeItem("initialMessage");
       handleSendMessage(initialMessage);
     }
-    
+
     // Add background effects
     const createStars = () => {
-      const starsContainer = document.createElement('div');
-      starsContainer.className = 'stars-container';
+      const starsContainer = document.createElement("div");
+      starsContainer.className = "stars-container";
       document.body.appendChild(starsContainer);
-      
+
       for (let i = 0; i < 100; i++) {
-        const star = document.createElement('div');
-        star.className = 'star';
+        const star = document.createElement("div");
+        star.className = "star";
         star.style.top = `${Math.random() * 100}%`;
         star.style.left = `${Math.random() * 100}%`;
         star.style.animationDelay = `${Math.random() * 10}s`;
@@ -45,11 +45,11 @@ export default function ChatInterface() {
         starsContainer.appendChild(star);
       }
     };
-    
+
     createStars();
-    
+
     return () => {
-      const starsContainer = document.querySelector('.stars-container');
+      const starsContainer = document.querySelector(".stars-container");
       if (starsContainer) {
         document.body.removeChild(starsContainer);
       }
@@ -68,7 +68,7 @@ export default function ChatInterface() {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTo({
         top: chatContainerRef.current.scrollHeight,
-        behavior: 'smooth'
+        behavior: "smooth",
       });
     }
   };
@@ -97,11 +97,11 @@ export default function ChatInterface() {
         method: "POST",
         headers: {
           Authorization:
-            "Bearer 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",
+            "Bearer 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",
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "microsoft/phi-4-reasoning-plus:free",
+          model: "meta-llama/llama-4-maverick:free",
           messages: [
             {
               role: "system",
@@ -185,21 +185,20 @@ export default function ChatInterface() {
   // Function to display floating emojis when new messages arrive
   const createFloatingEmoji = () => {
     if (!isNewMessage) return null;
-    
+
     const emojis = ["✨", "💫", "🔮", "💭", "💬"];
     const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
-    
+
     return (
       <div className="fixed z-50 pointer-events-none">
         {[...Array(5)].map((_, i) => (
-          <div 
+          <div
             key={i}
             className="floating-emoji absolute text-xl opacity-0"
             style={{
               left: `${40 + Math.random() * 20}%`,
-              animationDelay: `${i * 0.2}s`
-            }}
-          >
+              animationDelay: `${i * 0.2}s`,
+            }}>
             {randomEmoji}
           </div>
         ))}
@@ -211,10 +210,10 @@ export default function ChatInterface() {
     <div className="min-h-screen p-6 text-white relative bg-gradient-to-b from-gray-900 to-black">
       {/* Background effects */}
       <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
-      
+
       {/* Floating emojis */}
       {createFloatingEmoji()}
-      
+
       <div className="max-w-[1440px] mx-auto relative z-10 flex flex-col">
         <Nav />
 
@@ -222,13 +221,19 @@ export default function ChatInterface() {
           <div
             ref={chatContainerRef}
             onScroll={handleScroll}
-            className="flex-1 overflow-y-auto p-4 space-y-4 border-b border-blue-800/30 scrollbar-thin scrollbar-thumb-blue-800 scrollbar-track-transparent"
-          >
+            className="flex-1 overflow-y-auto p-4 space-y-4 border-b border-blue-800/30 scrollbar-thin scrollbar-thumb-blue-800 scrollbar-track-transparent">
             {messages.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-gray-400">
                 <div className="mb-4 text-blue-400 opacity-75">
-                  <svg className="w-16 h-16 animate-pulse" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+                  <svg
+                    className="w-16 h-16 animate-pulse"
+                    fill="currentColor"
+                    viewBox="0 0 20 20">
+                    <path
+                      fillRule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"
+                      clipRule="evenodd"
+                    />
                   </svg>
                 </div>
                 <p className="text-lg">
@@ -257,7 +262,7 @@ export default function ChatInterface() {
                 </div>
               </div>
             )}
-            
+
             <div ref={messagesEndRef} />
           </div>
 
@@ -265,10 +270,18 @@ export default function ChatInterface() {
           {!isNearBottom && messages.length > 0 && (
             <button
               onClick={scrollToBottom}
-              className="absolute bottom-20 right-6 bg-blue-600 text-white rounded-full w-10 h-10 flex items-center justify-center shadow-lg animate-bounce"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+              className="absolute bottom-20 right-6 bg-blue-600 text-white rounded-full w-10 h-10 flex items-center justify-center shadow-lg animate-bounce">
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                />
               </svg>
             </button>
           )}
