@@ -217,15 +217,15 @@ const SpeechToText: React.FC<SpeechToTextProps> = ({ onTranscriptChange }) => {
             {isListening ? "Асаалттай" : "Унтарсан"}
           </span>
         </div>
-        {error && <p className="text-red-500
-
- text-sm text-center">{error}</p>}
+        {error && <p className="text-red-500 text-sm text-center">{error}</p>}
         <div className="flex-grow mt-2">
           <div
-            className="w-full h-full p-3 md:p-4 bg-slate-800 rounded-md text-sm md:text-base text-white whitespace-pre-wrap overflow-auto font-inter"
+            className="w-full p-3 md:p-4 bg-slate-800 rounded-md text-sm md:text-base text-white whitespace-pre-wrap overflow-y-auto font-inter"
             style={{
+              maxHeight: "150px",
               minHeight: "100px",
               boxShadow: "0 4px 12px rgba(0, 64, 255, 0.3)",
+              overflowY: "auto",
             }}
           >
             <strong className="font-inter">Хөрвүүлсэн текст:</strong>
@@ -238,3 +238,20 @@ const SpeechToText: React.FC<SpeechToTextProps> = ({ onTranscriptChange }) => {
 };
 
 export default SpeechToText;
+
+/* Optional: Add to your global CSS (e.g., globals.css) for custom scrollbar styling
+.w-full::-webkit-scrollbar {
+  width: 8px;
+}
+.w-full::-webkit-scrollbar-track {
+  background: #1e293b; // Match bg-slate-800
+  border-radius: 4px;
+}
+.w-full::-webkit-scrollbar-thumb {
+  background: #3b82f6; // Match blue-500
+  border-radius: 4px;
+}
+.w-full::-webkit-scrollbar-thumb:hover {
+  background: #2563eb; // Match blue-600
+}
+*/

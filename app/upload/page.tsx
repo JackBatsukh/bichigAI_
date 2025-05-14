@@ -50,7 +50,7 @@ export default function UploadPage() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  console.log(transcribedText)
+  console.log(transcribedText);
 
   useEffect(() => {
     console.log("Canvas ref updated:", !!canvasRef.current);
@@ -278,7 +278,7 @@ export default function UploadPage() {
                     ) : (
                       <>
                         <div
-                          className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-blue-600 bg-opacity-50 flex items-center justify-center mb-2 md:mb-4"
+                          className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-blue-600 bg-opacity-50 flex items-center justify-center whim mb-2 md:mb-4"
                           style={{
                             boxShadow: "0 0 20px rgba(0, 80, 120, 0.7)",
                           }}
@@ -348,7 +348,7 @@ export default function UploadPage() {
                       <div
                         className="flex flex-col items-center justify-center p-2 md:p-4 border border-blue-700 rounded-md hover:bg-blue-700 hover:bg-opacity-30 cursor-pointer bg-blue-800 bg-opacity-20"
                         style={{
-                          boxShadow: "0 5px 15px rgba(0, 128, 255, 1)",
+                          boxShadow: "0 5px 15px rgba(0, 128, 255, 1 CONV)",
                         }}
                         onClick={selectFile}
                       >
