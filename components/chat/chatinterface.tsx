@@ -1,10 +1,11 @@
-"use client";
+'use client';
 
 import { useState, useEffect, useRef } from "react";
 import MessageItem from "./chatitems";
 import ChatInput from "./chatinput";
 import { Message } from "../../lib/types";
 import Nav from "../upload/nav";
+import { useRouter } from "next/navigation";
 
 export default function ChatInterface() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -14,6 +15,7 @@ export default function ChatInterface() {
   const [isNearBottom, setIsNearBottom] = useState(true);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const [isNewMessage, setIsNewMessage] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     const savedLanguage = localStorage.getItem("selectedLanguage");
@@ -141,6 +143,12 @@ export default function ChatInterface() {
     }
   };
 
+  const handleNewChat = () => {
+    setMessages([]);
+    localStorage.removeItem("pdfText");
+    localStorage.removeItem("documentTitle");
+  };
+
   const createFloatingEmoji = () => {
     if (!isNewMessage) return null;
 
@@ -245,7 +253,12 @@ export default function ChatInterface() {
           )}
 
           <div className="p-3 sm:p-4 bg-gray-900/50">
-            <ChatInput onSendMessage={handleSendMessage} disabled={isLoading} />
+            <ChatInput 
+              onSendMessage={handleSendMessage} 
+              onNewChat={handleNewChat}
+              onNavigateToUpload={() => router.push("/upload")}
+              disabled={isLoading} 
+            />
           </div>
         </div>
       </div>
