@@ -119,50 +119,9 @@ export default function ChatInterface() {
         }),
       });
 
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(
-          errorData.error || `API request failed with status ${res.status}`
-        );
-      }
-
       const data = await res.json();
-      console.log("API Response:", data);
-
-      if (!data || typeof data !== "object") {
-        throw new Error("Invalid API response: response is not an object");
-      }
-
-      if (!data.choices) {
-        console.error("API Response missing choices:", data);
-        throw new Error("Invalid API response: missing choices field");
-      }
-
-      if (!Array.isArray(data.choices) || data.choices.length === 0) {
-        console.error("Invalid choices format:", data.choices);
-        throw new Error(
-          "Invalid API response: choices must be a non-empty array"
-        );
-      }
-
       const firstChoice = data.choices[0];
-      if (!firstChoice || typeof firstChoice !== "object") {
-        console.error("Invalid first choice format:", firstChoice);
-        throw new Error("Invalid API response: first choice is not an object");
-      }
-
       const message = firstChoice.message;
-      if (!message || typeof message !== "object") {
-        console.error("Invalid message format:", message);
-        throw new Error("Invalid API response: message is not an object");
-      }
-
-      if (!message.content || typeof message.content !== "string") {
-        console.error("Invalid message content:", message.content);
-        throw new Error(
-          "Invalid API response: message content is not a string"
-        );
-      }
 
       const reply = message.content;
       setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
@@ -182,7 +141,6 @@ export default function ChatInterface() {
     }
   };
 
-  // Function to display floating emojis when new messages arrive
   const createFloatingEmoji = () => {
     if (!isNewMessage) return null;
 
@@ -194,7 +152,7 @@ export default function ChatInterface() {
         {[...Array(5)].map((_, i) => (
           <div
             key={i}
-            className="floating-emoji absolute text-xl opacity-0"
+            className="floating-emoji absolute text-lg sm:text-xl opacity-0"
             style={{
               left: `${40 + Math.random() * 20}%`,
               animationDelay: `${i * 0.2}s`,
@@ -207,7 +165,7 @@ export default function ChatInterface() {
   };
 
   return (
-    <div className="min-h-screen p-6 text-white relative bg-gradient-to-b from-gray-900 to-black">
+    <div className="min-h-screen p-4 sm:p-6 text-white relative bg-gradient-to-b from-gray-900 to-black">
       {/* Background effects */}
       <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
 
@@ -217,7 +175,7 @@ export default function ChatInterface() {
       <div className="max-w-[1440px] mx-auto relative z-10 flex flex-col">
         <Nav />
 
-        <div className="flex flex-col border border-blue-900/30 bg-black/30 rounded-lg shadow-xl backdrop-blur-sm max-h-[80vh] h-[80vh] overflow-hidden transition-all duration-300 hover:shadow-blue-900/20 hover:shadow-2xl">
+        <div className="flex flex-col border border-blue-900/30 bg-black/30 rounded-lg shadow-xl backdrop-blur-sm h-[70vh] sm:h-[80vh] max-h-[90vh] overflow-hidden transition-all duration-300 hover:shadow-blue-900/20 hover:shadow-2xl">
           <div
             ref={chatContainerRef}
             onScroll={handleScroll}
@@ -236,12 +194,12 @@ export default function ChatInterface() {
                     />
                   </svg>
                 </div>
-                <p className="text-lg">
+                <p className="text-base sm:text-lg">
                   {selectedLanguage === "mn"
                     ? "Харилцаа эхлээгүй байна. Яриа эхлүүлнэ үү!"
                     : "No messages yet. Start a conversation!"}
                 </p>
-                <p className="text-sm mt-2 max-w-md text-center text-gray-500">
+                <p className="text-xs sm:text-sm mt-2 max-w-xs sm:max-w-md text-center text-gray-500">
                   {selectedLanguage === "mn"
                     ? "Асуултаа доор бичээд илгээнэ үү."
                     : "Type your message below to begin chatting."}
@@ -254,8 +212,8 @@ export default function ChatInterface() {
             )}
 
             {isLoading && (
-              <div className="flex justify-start py-4 ml-10">
-                <div className="typing-indicator px-4 py-2 rounded-2xl bg-gray-800/80 shadow-lg">
+              <div className="flex justify-start py-4 ml-6 sm:ml-10">
+                <div className="typing-indicator px-3 sm:px-4 py-2 rounded-2xl bg-gray-800/80 shadow-lg">
                   <span></span>
                   <span></span>
                   <span></span>
@@ -286,7 +244,7 @@ export default function ChatInterface() {
             </button>
           )}
 
-          <div className="p-4 bg-gray-900/50">
+          <div className="p-3 sm:p-4 bg-gray-900/50">
             <ChatInput onSendMessage={handleSendMessage} disabled={isLoading} />
           </div>
         </div>

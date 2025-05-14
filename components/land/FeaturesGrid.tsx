@@ -30,14 +30,14 @@ const features = [
 
 export default function FeaturesGrid() {
   return (
-    <section id="features" className=" mb-12">
-      <h1 className="text-2xl md:text-3xl font-bold mb-2 text-center text-white">
-  Хүчирхэг баримт бичгийн шинжилгээ
-</h1>
-
-
-      <div className="w-16 h-1 bg-gradient-to-r from-blue-400 to-blue-700 rounded-full mx-auto mb-6" />
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+    <section id="features" className="py-16 md:py-24 flex flex-col gap-8 md:gap-16">
+      <div>
+        <h1 className="text-2xl md:text-3xl font-bold mb-2 text-center text-white">
+          Хүчирхэг баримт бичгийн шинжилгээ
+        </h1>
+        <div className="w-16 h-1 bg-gradient-to-r from-blue-400 to-blue-700 rounded-full mx-auto mb-6" />
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 lg:gap-8 px-4 md:px-6 lg:px-0">
         {features.map((feature, i) => (
           <FeatureCard key={i} title={feature.title} description={feature.description} />
         ))}
