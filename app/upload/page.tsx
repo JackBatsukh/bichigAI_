@@ -41,24 +41,21 @@ export default function UploadPage() {
   >("Upload File");
   const [text, setText] = useState<string>("");
   const [isHovering, setIsHovering] = useState<boolean>(false);
-  const [selectedFile, setSelectedFile] = useState<FileWithPreview | null>(
-    null
-  );
+  const [selectedFile, setSelectedFile] = useState<FileWithPreview | null>(null);
   const [showFileSelector, setShowFileSelector] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [selectedLanguage, setSelectedLanguage] = useState<string>("en");
-
   const [transcribedText, setTranscribedText] = useState<string>("");
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Log when canvasRef is set
+  console.log(transcribedText)
+
   useEffect(() => {
     console.log("Canvas ref updated:", !!canvasRef.current);
   }, [canvasRef.current]);
 
-  // Redirect to login if unauthenticated
   useEffect(() => {
     if (status === "unauthenticated") {
       router.push("/login");
@@ -127,7 +124,7 @@ export default function UploadPage() {
           localStorage.setItem(
             "initialMessage",
             selectedLanguage === "mn"
-              ? `${data.document.title} баримт бичгийг тайлбарлана уу.`
+              ? ` ${data.document.title} баримт бичгийг тайлбарлана уу.`
               : `Please analyze this document: ${data.document.title}`
           );
 
@@ -168,7 +165,6 @@ export default function UploadPage() {
       .padStart(2, "0")}`;
   };
 
-  // Show loading state while checking authentication
   if (status === "loading") {
     return (
       <div className="min-h-screen text-white flex items-center justify-center">
@@ -374,7 +370,7 @@ export default function UploadPage() {
               </>
             ) : activeTab === "Microphone" ? (
               <div>
-                <SpeechToText />
+                <SpeechToText onTranscriptChange={setTranscribedText} />
               </div>
             ) : (
               <div

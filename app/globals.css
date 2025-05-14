@@ -265,3 +265,44 @@ body:has(.login-page) {
   @apply bg-white/10 backdrop-blur-xl rounded-2xl border border-white/20;
   box-shadow: 0 20px 30px rgba(0, 15, 40, 0.7);
 }
+@keyframes soundWave {
+  0% { transform: scaleY(1); }
+  50% { transform: scaleY(1.5); }
+  100% { transform: scaleY(1); }
+}
+
+@keyframes soundWave {
+  0% { transform: scaleY(1); }
+  50% { transform: scaleY(1.5); }
+  100% { transform: scaleY(1); }
+}
+
+.sound-wave {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.sound-wave-bar {
+  animation: soundWave 750ms ease-in-out infinite;
+}
+
+.sound-wave-bar:nth-child(1) {
+  animation-delay: 0ms;
+}
+
+.sound-wave-bar:nth-child(2) {
+  animation-delay: 150ms;
+}
+
+.sound-wave-bar:nth-child(3) {
+  animation-delay: 300ms;
+}
+
+.sound-wave-bar:nth-child(4) {
+  animation-delay: 450ms;
+}
+
+.sound-wave-bar:nth-child(5) {
+  animation-delay: 600ms;
+}
