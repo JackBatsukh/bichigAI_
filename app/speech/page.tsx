@@ -97,7 +97,7 @@ const SpeechToText: React.FC = () => {
   }
 
   return (
-    <div className="p-6  mx-auto shadow-md">
+    <div className="p-6  rounded text-black shadow-md">
       <h1 className="text-2xl font-bold mb-4 text-center">
         Монгол Хэлээр Яриаг Текст Болгох
       </h1>
@@ -128,7 +128,7 @@ const SpeechToText: React.FC = () => {
 
       {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
-      <div className="mt-4 p-4  rounded text-sm whitespace-pre-wrap">
+      <div className="mt-4 p-4 bg-gray-100 rounded text-sm whitespace-pre-wrap">
         <strong>Хөрвүүлсэн текст:</strong>
         <p className="mt-2">{transcript || "..."}</p>
       </div>
