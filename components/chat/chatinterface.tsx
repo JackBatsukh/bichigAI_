@@ -28,14 +28,18 @@ export default function ChatInterface() {
       handleSendMessage(initialMessage);
     }
 
-    // Create stars array with random values
-    const newStars = Array.from({ length: 100 }, () => ({
+    // Create stars data
+    const starsData = Array.from({ length: 100 }, () => ({
       top: `${Math.random() * 100}%`,
       left: `${Math.random() * 100}%`,
       delay: `${Math.random() * 10}s`,
       duration: `${3 + Math.random() * 7}s`
     }));
-    setStars(newStars);
+    setStars(starsData);
+
+    return () => {
+      setStars([]);
+    };
   }, []);
 
   useEffect(() => {
@@ -152,7 +156,7 @@ export default function ChatInterface() {
       {/* Background effects */}
       <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
       
-      {/* Stars container */}
+      {/* Stars */}
       <div className="stars-container">
         {stars.map((star, index) => (
           <div
