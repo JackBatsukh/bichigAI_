@@ -169,15 +169,13 @@ const Nav: React.FC = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-        >
+          transition={{ duration: 0.3 }}>
           <motion.div
             className="bg-slate-800 border border-slate-700 rounded-lg p-4 md:p-6 w-full max-w-md relative"
             initial={{ y: 50 }}
             animate={{ y: 0 }}
             exit={{ y: 50 }}
-            transition={{ duration: 0.4 }}
-          >
+            transition={{ duration: 0.4 }}>
             <button
               onClick={closePremiumModal}
               className="absolute top-3 right-3 md:top-4 md:right-4 text-gray-400 hover:text-white"
@@ -196,8 +194,7 @@ const Nav: React.FC = () => {
                   strokeWidth="2"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className="text-black"
-                >
+                  className="text-black">
                   <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2z" />
                 </svg>
               </span>
@@ -249,8 +246,7 @@ const Nav: React.FC = () => {
                   scale: 1.02,
                   boxShadow: "0 0 12px rgba(255, 215, 0, 0.7)",
                 }}
-                transition={{ duration: 0.2 }}
-              >
+                transition={{ duration: 0.2 }}>
                 Баталгаажуулах
               </motion.button>
               <button

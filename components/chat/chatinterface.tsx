@@ -29,15 +29,13 @@ export default function ChatInterface() {
       handleSendMessage(initialMessage);
     }
 
-    // Add background effects with reduced density for mobile
+    // Add background effects
     const createStars = () => {
       const starsContainer = document.createElement("div");
       starsContainer.className = "stars-container";
       document.body.appendChild(starsContainer);
 
-      // Reduce number of stars on smaller screens
-      const starCount = window.innerWidth < 640 ? 50 : 100;
-      for (let i = 0; i < starCount; i++) {
+      for (let i = 0; i < 100; i++) {
         const star = document.createElement("div");
         star.className = "star";
         star.style.top = `${Math.random() * 100}%`;
@@ -77,7 +75,8 @@ export default function ChatInterface() {
 
   const handleScroll = () => {
     if (chatContainerRef.current) {
-      const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
+      const { scrollTop, scrollHeight, clientHeight } =
+        chatContainerRef.current;
       setIsNearBottom(scrollHeight - scrollTop - clientHeight < 150);
     }
   };
@@ -98,11 +97,11 @@ export default function ChatInterface() {
         method: "POST",
         headers: {
           Authorization:
-            "Bearer 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",
+            "Bearer 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",
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "microsoft/phi-4-reasoning-plus:free",
+          model: "meta-llama/llama-4-maverick:free",
           messages: [
             {
               role: "system",
@@ -120,43 +119,9 @@ export default function ChatInterface() {
         }),
       });
 
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        throw new Error(
-          errorData.error || `API request failed with status ${res.status}`
-        );
-      }
-
       const data = await res.json();
-      if (!data || typeof data !== "object") {
-        throw new Error("Invalid API response: response is not an object");
-      }
-
-      if (!data.choices) {
-        throw new Error("Invalid API response: missing choices field");
-      }
-
-      if (!Array.isArray(data.choices) || data.choices.length === 0) {
-        throw new Error(
-          "Invalid API response: choices must be a non-empty array"
-        );
-      }
-
       const firstChoice = data.choices[0];
-      if (!firstChoice || typeof firstChoice !== "object") {
-        throw new Error("Invalid API response: first choice is not an object");
-      }
-
       const message = firstChoice.message;
-      if (!message || typeof message !== "object") {
-        throw new Error("Invalid API response: message is not an object");
-      }
-
-      if (!message.content || typeof message.content !== "string") {
-        throw new Error(
-          "Invalid API response: message content is not a string"
-        );
-      }
 
       const reply = message.content;
       setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
@@ -182,20 +147,16 @@ export default function ChatInterface() {
     const emojis = ["✨", "💫", "🔮", "💭", "💬"];
     const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
 
-    // Reduce number of emojis on mobile
-    const emojiCount = window.innerWidth < 640 ? 3 : 5;
-
     return (
       <div className="fixed z-50 pointer-events-none">
-        {[...Array(emojiCount)].map((_, i) => (
+        {[...Array(5)].map((_, i) => (
           <div
             key={i}
             className="floating-emoji absolute text-lg sm:text-xl opacity-0"
             style={{
               left: `${40 + Math.random() * 20}%`,
               animationDelay: `${i * 0.2}s`,
-            }}
-          >
+            }}>
             {randomEmoji}
           </div>
         ))}
@@ -211,23 +172,21 @@ export default function ChatInterface() {
       {/* Floating emojis */}
       {createFloatingEmoji()}
 
-      <div className="w-full max-w-[90vw] sm:max-w-3xl lg:max-w-5xl mx-auto relative z-10 flex flex-col">
+      <div className="max-w-[1440px] mx-auto relative z-10 flex flex-col">
         <Nav />
 
         <div className="flex flex-col border border-blue-900/30 bg-black/30 rounded-lg shadow-xl backdrop-blur-sm h-[70vh] sm:h-[80vh] max-h-[90vh] overflow-hidden transition-all duration-300 hover:shadow-blue-900/20 hover:shadow-2xl">
           <div
             ref={chatContainerRef}
             onScroll={handleScroll}
-            className="flex-1 overflow-y-auto p-3 sm:p-4 space-y-4 border-b border-blue-800/30 scrollbar-thin scrollbar-thumb-blue-800 scrollbar-track-transparent"
-          >
+            className="flex-1 overflow-y-auto p-4 space-y-4 border-b border-blue-800/30 scrollbar-thin scrollbar-thumb-blue-800 scrollbar-track-transparent">
             {messages.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-gray-400">
                 <div className="mb-4 text-blue-400 opacity-75">
                   <svg
-                    className="w-12 h-12 sm:w-16 sm:h-16 animate-pulse"
+                    className="w-16 h-16 animate-pulse"
                     fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
+                    viewBox="0 0 20 20">
                     <path
                       fillRule="evenodd"
                       d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"
@@ -269,14 +228,12 @@ export default function ChatInterface() {
           {!isNearBottom && messages.length > 0 && (
             <button
               onClick={scrollToBottom}
-              className="absolute bottom-16 sm:bottom-20 right-4 sm:right-6 bg-blue-600 text-white rounded-full w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center shadow-lg animate-bounce"
-            >
+              className="absolute bottom-20 right-6 bg-blue-600 text-white rounded-full w-10 h-10 flex items-center justify-center shadow-lg animate-bounce">
               <svg
-                className="w-4 h-4 sm:w-5 sm:h-5"
+                className="w-5 h-5"
                 fill="none"
                 stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
+                viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"

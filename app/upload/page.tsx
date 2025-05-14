@@ -44,7 +44,7 @@ export default function UploadPage() {
   const analyserRef = useRef<AnalyserNode | null>(null);
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const animationFrameRef = useRef<number | null>(null);
-  // File input ref
+  const streamRef = useRef<MediaStream | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -63,6 +63,19 @@ export default function UploadPage() {
       cleanupWaveform();
     };
   }, []);
+
+  // Setup waveform when isRecording is true and canvas is available
+  useEffect(() => {
+    if (isRecording && streamRef.current && canvasRef.current) {
+      console.log("Triggering waveform setup from useEffect");
+      setupWaveform(streamRef.current);
+    }
+    return () => {
+      if (isRecording) {
+        cleanupWaveform();
+      }
+    };
+  }, [isRecording]);
 
   // Update transcribed text to main text when switching tabs
   useEffect(() => {
@@ -167,7 +180,12 @@ export default function UploadPage() {
 
   // Waveform visualization setup
   const setupWaveform = (stream: MediaStream) => {
-    console.log("Setting up waveform");
+    console.log("Setting up waveform, canvas available:", !!canvasRef.current);
+    if (!canvasRef.current) {
+      console.error("Canvas not found, aborting waveform setup");
+      return;
+    }
+
     audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
     audioContextRef.current.resume().then(() => console.log("AudioContext resumed"));
 
@@ -177,17 +195,11 @@ export default function UploadPage() {
     source.connect(analyserRef.current);
 
     const canvas = canvasRef.current;
-    if (!canvas) {
-      console.error("Canvas not found");
-      return;
-    }
-
-    // Set canvas dimensions based on container
     const container = canvas.parentElement;
     if (container) {
-      canvas.width = container.clientWidth * window.devicePixelRatio; // Adjust for high-DPI displays
+      canvas.width = container.clientWidth * window.devicePixelRatio;
       canvas.height = window.innerWidth < 768 ? 80 : 96; // h-20 (80px) on mobile, h-24 (96px) on desktop
-      canvas.style.width = `${container.clientWidth}px`; // Ensure CSS width matches
+      canvas.style.width = `${container.clientWidth}px`;
       canvas.style.height = `${canvas.height}px`;
     }
 
@@ -197,7 +209,6 @@ export default function UploadPage() {
       return;
     }
 
-    // Scale context for high-DPI displays
     ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
 
     const bufferLength = analyserRef.current.frequencyBinCount;
@@ -213,7 +224,6 @@ export default function UploadPage() {
 
       ctx.clearRect(0, 0, canvas.width / window.devicePixelRatio, canvas.height / window.devicePixelRatio);
 
-      // Set gradient for waveform
       const gradient = ctx.createLinearGradient(0, 0, canvas.width / window.devicePixelRatio, 0);
       gradient.addColorStop(0, "#3b82f6"); // blue-500
       gradient.addColorStop(1, "#9333ea"); // purple-600
@@ -265,6 +275,7 @@ export default function UploadPage() {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       console.log("Microphone stream acquired");
+      streamRef.current = stream;
       audioChunksRef.current = [];
 
       const mediaRecorder = new MediaRecorder(stream);
@@ -284,14 +295,12 @@ export default function UploadPage() {
 
         // Stop all tracks to release the microphone
         stream.getTracks().forEach((track) => track.stop());
+        streamRef.current = null;
         cleanupWaveform();
       };
 
       mediaRecorder.start();
       setIsRecording(true);
-
-      // Setup waveform visualization
-      setupWaveform(stream);
 
       // Start timer
       let seconds = 0;
@@ -533,18 +542,24 @@ export default function UploadPage() {
                         className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-red-600 bg-opacity-80 flex items-center justify-center animate-pulse"
                         style={{ boxShadow: "0 0 30px rgba(255, 0, 0, 0.6)" }}
                       >
-                        <Mic size={32} className="text-white" />
+                        <Mic size={32} className=" personally-white" />
                       </div>
                       <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 bg-slate-800 px-3 py-1 rounded-full text-xs md:text-sm text-red-400">
                         {formatTime(recordingTime)}
                       </div>
                     </div>
-                    <canvas
-                      ref={canvasRef}
-                      className="w-full h-20 md:h-24 mb-4 bg-slate-900/50 rounded-md"
-                      style={{ maxWidth: "100%", display: "block" }}
-                      aria-hidden="true"
-                    ></canvas>
+                    {canvasRef.current ? (
+                      <canvas
+                        ref={canvasRef}
+                        className="w-full h-20 md:h-24 mb-4 bg-slate-900/50 rounded-md"
+                        style={{ maxWidth: "100%", display: "block" }}
+                        aria-hidden="true"
+                      ></canvas>
+                    ) : (
+                      <div className="w-full h-20 md:h-24 mb-4 bg-slate-900/50 rounded-md flex items-center justify-center">
+                        <p className="text-blue-400 text-sm">Waveform unavailable</p>
+                      </div>
+                    )}
                     <p className="text-white text-sm md:text-base mb-4">Recording in progress...</p>
                     <button
                       onClick={stopRecording}
