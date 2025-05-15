@@ -17,7 +17,7 @@ export default function Header() {
       <div className="mx-auto w-full max-w-7xl flex items-center justify-between px-4 md:px-6">
         <div className="text-xl font-extrabold text-white tracking-wide flex items-center gap-2">
           <Link href="/">
-            <h1 className="logo-font text-2xl">БичигAI</h1>
+            <h1 className="logo-font font-light text-2xl">БичигAI</h1>
           </Link>
         </div>
 
