@@ -97,7 +97,7 @@ export default function ChatInterface() {
         method: "POST",
         headers: {
           Authorization:
-            "Bearer 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",
+            "Bearer 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",
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
