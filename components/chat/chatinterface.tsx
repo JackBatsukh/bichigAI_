@@ -15,6 +15,7 @@ export default function ChatInterface() {
   const [isNearBottom, setIsNearBottom] = useState(true);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const [isNewMessage, setIsNewMessage] = useState(false);
+  const [stars, setStars] = useState<Array<{ top: string; left: string; delay: string; duration: string }>>([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -25,36 +26,21 @@ export default function ChatInterface() {
 
     const initialMessage = localStorage.getItem("initialMessage");
     if (initialMessage) {
-      const newMessage: Message = { role: "user", content: initialMessage };
-      setMessages((prev) => [...prev, newMessage]);
       localStorage.removeItem("initialMessage");
       handleSendMessage(initialMessage);
     }
 
-    // Add background effects
-    const createStars = () => {
-      const starsContainer = document.createElement("div");
-      starsContainer.className = "stars-container";
-      document.body.appendChild(starsContainer);
-
-      for (let i = 0; i < 100; i++) {
-        const star = document.createElement("div");
-        star.className = "star";
-        star.style.top = `${Math.random() * 100}%`;
-        star.style.left = `${Math.random() * 100}%`;
-        star.style.animationDelay = `${Math.random() * 10}s`;
-        star.style.animationDuration = `${3 + Math.random() * 7}s`;
-        starsContainer.appendChild(star);
-      }
-    };
-
-    createStars();
+    // Create stars data
+    const starsData = Array.from({ length: 100 }, () => ({
+      top: `${Math.random() * 100}%`,
+      left: `${Math.random() * 100}%`,
+      delay: `${Math.random() * 10}s`,
+      duration: `${3 + Math.random() * 7}s`,
+    }));
+    setStars(starsData);
 
     return () => {
-      const starsContainer = document.querySelector(".stars-container");
-      if (starsContainer) {
-        document.body.removeChild(starsContainer);
-      }
+      setStars([]);
     };
   }, []);
 
@@ -77,8 +63,7 @@ export default function ChatInterface() {
 
   const handleScroll = () => {
     if (chatContainerRef.current) {
-      const { scrollTop, scrollHeight, clientHeight } =
-        chatContainerRef.current;
+      const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
       setIsNearBottom(scrollHeight - scrollTop - clientHeight < 150);
     }
   };
@@ -98,8 +83,7 @@ export default function ChatInterface() {
       const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
         headers: {
-          Authorization:
-            "Bearer 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",
+          Authorization: `Bearer ${process.env.OPENROUTER_API_KEY || "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"}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -134,10 +118,7 @@ export default function ChatInterface() {
           ? "Уучлаарай, хариулт өгөх боломжгүй байна. Дахин оролдоно уу."
           : "Sorry, I couldn't process that. Please try again.";
 
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: errorMessage },
-      ]);
+      setMessages((prev) => [...prev, { role: "assistant", content: errorMessage }]);
     } finally {
       setIsLoading(false);
     }
@@ -164,7 +145,8 @@ export default function ChatInterface() {
             style={{
               left: `${40 + Math.random() * 20}%`,
               animationDelay: `${i * 0.2}s`,
-            }}>
+            }}
+          >
             {randomEmoji}
           </div>
         ))}
@@ -177,6 +159,22 @@ export default function ChatInterface() {
       {/* Background effects */}
       <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
 
+      {/* Stars */}
+      <div className="stars-container">
+        {stars.map((star, index) => (
+          <div
+            key={index}
+            className="star"
+            style={{
+              top: star.top,
+              left: star.left,
+              animationDelay: star.delay,
+              animationDuration: star.duration,
+            }}
+          />
+        ))}
+      </div>
+
       {/* Floating emojis */}
       {createFloatingEmoji()}
 
@@ -187,14 +185,16 @@ export default function ChatInterface() {
           <div
             ref={chatContainerRef}
             onScroll={handleScroll}
-            className="flex-1 overflow-y-auto p-4 space-y-4 border-b border-blue-800/30 scrollbar-thin scrollbar-thumb-blue-800 scrollbar-track-transparent">
+            className="flex-1 overflow-y-auto p-4 space-y-4 border-b border-blue-800/30 scrollbar-thin scrollbar-thumb-blue-800 scrollbar-track-transparent"
+          >
             {messages.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full text-gray-400">
                 <div className="mb-4 text-blue-400 opacity-75">
                   <svg
                     className="w-16 h-16 animate-pulse"
                     fill="currentColor"
-                    viewBox="0 0 20 20">
+                    viewBox="0 0 20 20"
+                  >
                     <path
                       fillRule="evenodd"
                       d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"
@@ -236,12 +236,14 @@ export default function ChatInterface() {
           {!isNearBottom && messages.length > 0 && (
             <button
               onClick={scrollToBottom}
-              className="absolute bottom-20 right-6 bg-blue-600 text-white rounded-full w-10 h-10 flex items-center justify-center shadow-lg animate-bounce">
+              className="absolute bottom-20 right-6 bg-blue-600 text-white rounded-full w-10 h-10 flex items-center justify-center shadow-lg animate-bounce"
+            >
               <svg
                 className="w-5 h-5"
                 fill="none"
                 stroke="currentColor"
-                viewBox="0 0 24 24">
+                viewBox="0 0 24 24"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -253,11 +255,11 @@ export default function ChatInterface() {
           )}
 
           <div className="p-3 sm:p-4 bg-gray-900/50">
-            <ChatInput 
-              onSendMessage={handleSendMessage} 
+            <ChatInput
+              onSendMessage={handleSendMessage}
               onNewChat={handleNewChat}
               onNavigateToUpload={() => router.push("/upload")}
-              disabled={isLoading} 
+              disabled={isLoading}
             />
           </div>
         </div>
