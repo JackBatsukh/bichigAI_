@@ -42,6 +42,18 @@ export default function Roadmap() {
     {
       title: "Phase 4: Advanced AI Features",
       description: "Integrate advanced AI capabilities, such as context-aware responses and enhanced document analysis.",
+      status: "Completed",
+      date: "Q4 2025",
+    },
+    {
+      title: "Phase 4: Advanced AI Features",
+      description: "Integrate advanced AI capabilities, such as context-aware responses and enhanced document analysis.",
+      status: "Planned",
+      date: "Q4 2025",
+    },
+    {
+      title: "Phase 4: Advanced AI Features",
+      description: "Integrate advanced AI capabilities, such as context-aware responses and enhanced document analysis.",
       status: "Planned",
       date: "Q4 2025",
     },
