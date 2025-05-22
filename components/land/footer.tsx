@@ -1,12 +1,14 @@
+'use client';
+
 import React from "react";
 import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="text-white py-6 mt-8 border-t border-white/10">
+    <footer className="relative z-10 text-white py-6 mt-8 border-t border-white/10 flex-shrink-0">
       <div className="mx-auto w-full max-w-7xl px-4 md:px-6">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-4">
-          <div className="flex flex-wrap justify-center gap-4 md:gap-8">
+        <nav aria-label="Footer navigation" className="flex flex-col md:flex-row justify-center items-center gap-6 mb-4">
+          <div className="flex flex-wrap justify-center gap-4 md:gap-8 min-w-0">
             <Link href="#features" className="text-sm text-white/80 hover:text-white transition">
               Онцлогууд
             </Link>
@@ -17,9 +19,9 @@ export default function Footer() {
               Төлбөр
             </Link>
           </div>
-        </div>
+        </nav>
         <div className="mt-6 text-center text-sm text-white/70">
-          <p>&copy; {new Date().getFullYear()} БичигAI. Бүх эрх хуулиар хамгаалагдсан.</p>
+          <p>© {new Date().getFullYear()} БичигAI. Бүх эрх хуулиар хамгаалагдсан.</p>
         </div>
       </div>
     </footer>

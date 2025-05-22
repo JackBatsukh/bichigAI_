@@ -83,7 +83,7 @@ export default function ChatInterface() {
       const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
         headers: {
-          Authorization: `Bearer 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`,
+          Authorization: `Bearer ${process.env.NEXT_PUBLIC_OPENROUTER_API_KEY}`, // Use environment variable
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -157,7 +157,7 @@ export default function ChatInterface() {
   return (
     <div className="min-h-screen p-4 sm:p-6 text-white relative bg-gradient-to-b from-gray-900 to-black">
       {/* Background effects */}
-      <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
+      <div className="grid-bg"></div>
 
       {/* Stars */}
       <div className="stars-container">

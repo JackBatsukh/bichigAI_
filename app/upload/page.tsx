@@ -11,6 +11,8 @@ import {
   Mic,
   MicOff,
   StopCircle,
+  Clock,
+  File,
 } from "lucide-react";
 import Nav from "@/components/upload/nav";
 import { useSession } from "next-auth/react";
@@ -197,38 +199,71 @@ export default function UploadPage() {
     <div className="min-h-screen text-white flex-col">
       <div className="min-h-screen w-full absolute z-1 blur-shape"></div>
       <div className="blur-shape-left"></div>
-      <div className="grid-bg"></div>
       <div className="container mx-auto px-4 py-6 z-10 relative">
         <Nav />
         <div
           className="flex flex-col md:flex-row"
           style={{ boxShadow: "0 20px 40px rgba(0, 20, 50, 0.8)" }}>
-          <div className="w-full md:w-64 bg-slate-900 bg-opacity-80 rounded-t-lg md:rounded-l-lg md:rounded-tr-none">
-            <div className="p-4 border-b border-slate-700">
-              <h2 className="font-semibold">History</h2>
+          {/* Improved History Section */}
+          <div className="w-full md:w-72 bg-gradient-to-b from-slate-900 to-slate-800 bg-opacity-95 rounded-t-lg md:rounded-l-lg md:rounded-tr-none border border-slate-700 border-opacity-50">
+            <div className="p-4 border-b border-slate-600 bg-gradient-to-r from-blue-900/20 to-purple-900/20">
+              <div className="flex items-center space-x-2">
+                <Clock size={18} className="text-blue-400" />
+                <h2 className="font-semibold text-blue-100">Recent History</h2>
+              </div>
             </div>
-            <div className="py-2 overflow-x-auto whitespace-nowrap md:whitespace-normal md:overflow-x-visible">
-              {history.map((item: any) => (
-                <div
-                  key={item.id}
-                  className="px-4 py-2 text-sm hover:bg-slate-800 cursor-pointer"
-                  onClick={() => {
-                    localStorage.setItem("pdfText", item.content);
-                    localStorage.setItem("documentTitle", item.title);
-                    localStorage.setItem("selectedLanguage", selectedLanguage);
-                    localStorage.setItem(
-                      "initialMessage",
-                      selectedLanguage === "mn"
-                        ? ` ${item.title} баримт бичгийг тайлбарлана уу.`
-                        : `Please analyze this document: ${item.title}`
-                    );
-                    router.push("/chat");
-                  }}>
-                  {item.title}
+            <div className="py-2 max-h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-slate-800">
+              {history.length > 0 ? (
+                history.map((item: any, index: number) => (
+                  <div
+                    key={item.id}
+                    className="mx-2 mb-2 p-3 rounded-lg bg-slate-800/50 hover:bg-slate-700/70 cursor-pointer transition-all duration-200 border border-slate-700/30 hover:border-blue-500/30 group"
+                    style={{ 
+                      boxShadow: "0 2px 8px rgba(0, 0, 0, 0.3)" 
+                    }}
+                    onClick={() => {
+                      localStorage.setItem("pdfText", item.content);
+                      localStorage.setItem("documentTitle", item.title);
+                      localStorage.setItem("selectedLanguage", selectedLanguage);
+                      localStorage.setItem(
+                        "initialMessage",
+                        selectedLanguage === "mn"
+                          ? ` ${item.title} баримт бичгийг тайлбарлана уу.`
+                          : `Please analyze this document: ${item.title}`
+                      );
+                      router.push("/chat");
+                    }}>
+                    <div className="flex items-start space-x-3">
+                      <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+                        <File size={14} className="text-white" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-sm font-medium text-white truncate group-hover:text-blue-300 transition-colors">
+                          {item.title}
+                        </h3>
+                        <p className="text-xs text-slate-400 mt-1 line-clamp-2">
+                          {item.content?.substring(0, 80)}...
+                        </p>
+                        <div className="flex items-center mt-2 text-xs text-slate-500">
+                          <Clock size={12} className="mr-1" />
+                          <span>{new Date(item.createdAt).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="p-6 text-center">
+                  <div className="w-12 h-12 bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <FileText size={20} className="text-slate-400" />
+                  </div>
+                  <p className="text-slate-400 text-sm">No history yet</p>
+                  <p className="text-slate-500 text-xs mt-1">Your analyzed documents will appear here</p>
                 </div>
-              ))}
+              )}
             </div>
           </div>
+
           <div className="flex-1 bg-slate-900 bg-opacity-50 rounded-b-lg md:rounded-r-lg md:rounded-bl-none p-4 md:p-6">
             <h2 className="text-xl font-semibold mb-4 md:mb-6">AI analyzer</h2>
             <div className="flex mb-4 md:mb-6">
