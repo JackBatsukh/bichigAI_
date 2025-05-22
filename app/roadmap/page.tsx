@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState, useEffect } from "react";
 import Nav from "@/components/upload/nav";
@@ -11,7 +11,7 @@ interface RoadmapItem {
 }
 
 interface Message {
-  role: 'system' | 'user' | 'assistant';
+  role: "system" | "user" | "assistant";
   content: string;
 }
 
@@ -43,35 +43,35 @@ export default function Roadmap() {
   const transformToRoadmapItems = (data: any): RoadmapItem[] => {
     try {
       const content = data.choices[0].message.content;
-      
+
       // Try to extract JSON from the response if it's not pure JSON
       let jsonContent = content;
       const jsonMatch = content.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         jsonContent = jsonMatch[0];
       }
-      
+
       const parsedData = JSON.parse(jsonContent);
-      console.log('Parsed JSON:', parsedData);
-      
+      console.log("Parsed JSON:", parsedData);
+
       if (!parsedData.groups || !Array.isArray(parsedData.groups)) {
-        throw new Error('Invalid response format: missing groups array');
+        throw new Error("Invalid response format: missing groups array");
       }
 
       return parsedData.groups.map((group: any) => ({
-        title: group.title || 'Untitled Group',
-        content: group.content || '',
-        subgroups: Array.isArray(group.subgroups) 
+        title: group.title || "Untitled Group",
+        content: group.content || "",
+        subgroups: Array.isArray(group.subgroups)
           ? group.subgroups.map((subgroup: any) => ({
-              title: subgroup.title || 'Untitled Subgroup',
-              content: subgroup.content || '',
-              subgroups: []
+              title: subgroup.title || "Untitled Subgroup",
+              content: subgroup.content || "",
+              subgroups: [],
             }))
-          : []
+          : [],
       }));
     } catch (error) {
-      console.error('Error transforming AI response:', error);
-      console.log('Failed to parse content:', data.choices[0].message.content);
+      console.error("Error transforming AI response:", error);
+      console.log("Failed to parse content:", data.choices[0].message.content);
       return [];
     }
   };
@@ -89,50 +89,70 @@ export default function Roadmap() {
 
         if (pdfText && documentTitle) {
           setIsLoading(true);
-          const systemMessage = selectedLanguage === "mn"
-            ? `Та "${documentTitle}" баримт бичгийг шинжилж байна. Энэ бол агуулга:\n\n${pdfText}\n\nТА ЗӨВХӨН JSON ФОРМАТААР ХАРИУЛАХ ШААРДЛАГАТАЙ. JSON өгөгдлийн бүтэц дараах шаардлагуудыг хангасан байх ёстой: Бүлэг, Дэд бүлэг, болон тэдгээртэй холбоотой мэдээлэл агуулсан байх. Бүлэг болон дэд бүлгүүд нь хоорондын логик хамаарлаар зохион байгуулагдсан, шаталсан (hierarchical) бүтэцтэй байна. Хариу нь зөвхөн JSON объект байх ёстой бөгөөд дараах бүтэцтэй байх ёстой: { "groups": [{ "title": "string", "content": "string", "subgroups": [{ "title": "string", "content": "string" }] }] }`
-            : `You are analyzing a document titled "${documentTitle}". Here is the content:\n\n${pdfText}\n\nYOU MUST RESPOND WITH ONLY JSON FORMAT. The JSON data structure should organize content into groups and subgroups, where each group and subgroup has a title and related content. The structure should reflect the logical hierarchy between groups and subgroups. The response must be a valid JSON object with the following structure: { "groups": [{ "title": "string", "content": "string", "subgroups": [{ "title": "string", "content": "string" }] }] }`;
+          const systemMessage =
+            selectedLanguage === "mn"
+              ? `Та "${documentTitle}" баримт бичгийг шинжилж байна. Энэ бол агуулга:\n\n${pdfText}\n\nТА ЗӨВХӨН JSON ФОРМАТААР ХАРИУЛАХ ШААРДЛАГАТАЙ. JSON өгөгдлийн бүтэц дараах шаардлагуудыг хангасан байх ёстой: Бүлэг, Дэд бүлэг, болон тэдгээртэй холбоотой мэдээлэл агуулсан байх. Бүлэг болон дэд бүлгүүд нь хоорондын логик хамаарлаар зохион байгуулагдсан, шаталсан (hierarchical) бүтэцтэй байна. Хариу нь зөвхөн JSON объект байх ёстой бөгөөд дараах бүтэцтэй байх ёстой: { "groups": [{ "title": "string", "content": "string", "subgroups": [{ "title": "string", "content": "string" }] }] }`
+              : `You are analyzing a document titled "${documentTitle}". Here is the content:\n\n${pdfText}\n\nYOU MUST RESPOND WITH ONLY JSON FORMAT. The JSON data structure should organize content into groups and subgroups, where each group and subgroup has a title and related content. The structure should reflect the logical hierarchy between groups and subgroups. The response must be a valid JSON object with the following structure: { "groups": [{ "title": "string", "content": "string", "subgroups": [{ "title": "string", "content": "string" }] }] }`;
 
-          const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer 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`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              model: "meta-llama/llama-4-maverick:free",
-              messages: [
-                {
-                  role: "system",
-                  content: systemMessage
-                }
-              ]
-            }),
-          });
+          const response = await fetch(
+            "https://openrouter.ai/api/v1/chat/completions",
+            {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer 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`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                model: "meta-llama/llama-4-maverick:free",
+                messages: [
+                  {
+                    role: "system",
+                    content: systemMessage,
+                  },
+                ],
+              }),
+            }
+          );
 
           if (!response.ok) {
-            throw new Error('Failed to analyze document');
+            throw new Error("Failed to analyze document");
           }
 
           const data = await response.json();
           const aiResponse = data.choices[0].message.content;
-          console.log('Raw AI Response:', aiResponse);
-          
+          console.log("Raw AI Response:", aiResponse);
+
           // Transform and save the roadmap items
           const transformedItems = transformToRoadmapItems(data);
-          console.log('Transformed Roadmap Items:', transformedItems);
+          console.log("Transformed Roadmap Items:", transformedItems);
           setRoadmapItems(transformedItems);
 
-          setMessages(prev => [...prev, { role: 'assistant', content: aiResponse }]);
+          setMessages((prev) => [
+            ...prev,
+            { role: "assistant", content: aiResponse },
+          ]);
 
           // Basic analysis
-          const words = pdfText.split(/\s+/).filter(word => word.length > 0);
+          const words = pdfText.split(/\s+/).filter((word) => word.length > 0);
           const wordCount = words.length;
 
           // Extract key phrases
-          const stopWords = ["the", "a", "an", "and", "or", "but", "in", "on", "at", "to", "for", "of"];
+          const stopWords = [
+            "the",
+            "a",
+            "an",
+            "and",
+            "or",
+            "but",
+            "in",
+            "on",
+            "at",
+            "to",
+            "for",
+            "of",
+          ];
           const wordFreq: { [key: string]: number } = {};
-          words.forEach(word => {
+          words.forEach((word) => {
             const cleanWord = word.toLowerCase().replace(/[.,!?]/g, "");
             if (!stopWords.includes(cleanWord) && cleanWord.length > 3) {
               wordFreq[cleanWord] = (wordFreq[cleanWord] || 0) + 1;
@@ -144,7 +164,8 @@ export default function Roadmap() {
             .map(([word]) => word);
 
           // Generate summary
-          const summary = words.slice(0, 200).join(" ") + (words.length > 200 ? "..." : "");
+          const summary =
+            words.slice(0, 200).join(" ") + (words.length > 200 ? "..." : "");
 
           setAnalyzedData({
             documentTitle,
@@ -154,8 +175,8 @@ export default function Roadmap() {
           });
         }
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
-        console.error('Error analyzing document:', err);
+        setError(err instanceof Error ? err.message : "An error occurred");
+        console.error("Error analyzing document:", err);
       } finally {
         setIsLoading(false);
       }
@@ -179,8 +200,6 @@ export default function Roadmap() {
         <Nav />
 
         <div className="mt-8">
-          
-
           {/* Analyzed Data Section */}
           <div className="mb-12">
             <h2 className="text-2xl font-semibold text-white mb-4 text-center">
@@ -201,19 +220,22 @@ export default function Roadmap() {
                   {analyzedData.documentTitle}
                 </h3>
                 <p className="text-gray-300 text-sm mb-2">
-                  <span className="font-bold">Word Count:</span> {analyzedData.wordCount}
+                  <span className="font-bold">Word Count:</span>{" "}
+                  {analyzedData.wordCount}
                 </p>
                 <p className="text-gray-300 text-sm mb-2">
                   <span className="font-bold">Key Phrases:</span>{" "}
                   {analyzedData.keyPhrases.join(", ")}
                 </p>
                 <p className="text-gray-300 text-sm">
-                  <span className="font-bold">Summary:</span> {analyzedData.summary}
+                  <span className="font-bold">Summary:</span>{" "}
+                  {analyzedData.summary}
                 </p>
               </div>
             ) : (
               <div className="bg-gray-900/80 rounded-lg p-6 shadow-xl backdrop-blur-sm border border-blue-800/30 text-center text-gray-400">
-                No document data available. Upload a document in the chat interface to see analysis here.
+                No document data available. Upload a document in the chat
+                interface to see analysis here.
               </div>
             )}
           </div>
@@ -231,27 +253,22 @@ export default function Roadmap() {
                 key={index}
                 className={`flex items-center mb-12 ${
                   index % 2 === 0 ? "flex-row" : "flex-row-reverse"
-                }`}
-              >
+                }`}>
                 {/* Timeline Content */}
                 <div
                   className={`w-1/2 p-4 ${
                     index % 2 === 0 ? "pr-8 text-right" : "pl-8 text-left"
-                  }`}
-                >
-                  <div 
+                  }`}>
+                  <div
                     className="bg-gray-900/80 rounded-lg p-5 shadow-xl backdrop-blur-sm border border-blue-800/30 hover:shadow-blue-900/20 transition-all duration-300 cursor-pointer"
                     onClick={() => {
                       setSelectedItem(item);
                       setIsModalOpen(true);
-                    }}
-                  >
+                    }}>
                     <h3 className="text-xl font-semibold text-white">
                       {item.title}
                     </h3>
-                    <p className="text-gray-300 text-sm mt-2">
-                      {item.content}
-                    </p>
+                    <p className="text-gray-300 text-sm mt-2">{item.content}</p>
                   </div>
                 </div>
 
@@ -275,20 +292,26 @@ export default function Roadmap() {
             <div className="bg-gray-900 rounded-lg p-6 w-full max-w-2xl mx-4 relative">
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="absolute top-4 right-4 text-gray-400 hover:text-white"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                className="absolute top-4 right-4 text-gray-400 hover:text-white">
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
-              
+
               <h3 className="text-2xl font-semibold text-white mb-4">
                 {selectedItem.title}
               </h3>
-              
-              <div className="text-gray-300 mb-6">
-                {selectedItem.content}
-              </div>
+
+              <div className="text-gray-300 mb-6">{selectedItem.content}</div>
 
               {selectedItem.subgroups && selectedItem.subgroups.length > 0 && (
                 <div className="space-y-4">
@@ -300,9 +323,7 @@ export default function Roadmap() {
                       <h5 className="text-lg font-medium text-blue-300 mb-2">
                         {subgroup.title}
                       </h5>
-                      <p className="text-gray-300">
-                        {subgroup.content}
-                      </p>
+                      <p className="text-gray-300">{subgroup.content}</p>
                     </div>
                   ))}
                 </div>
@@ -315,8 +336,7 @@ export default function Roadmap() {
         <div className="mt-8 text-center">
           <button
             onClick={() => router.push("/chat")}
-            className="bg-gradient-custom animate-gradient p-3 rounded-lg text-white shadow-blue hover:bg-gradient-to-br hover:from-pink-500/80 hover:to-purple-600/80 transition"
-          >
+            className="bg-gradient-custom animate-gradient p-3 rounded-lg text-white shadow-blue hover:bg-gradient-to-br hover:from-pink-500/80 hover:to-purple-600/80 transition">
             Back to Chat
           </button>
         </div>
