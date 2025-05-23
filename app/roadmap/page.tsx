@@ -93,22 +93,25 @@ export default function Roadmap() {
             ? `Та "${documentTitle}" баримт бичгийг шинжилж байна. Энэ бол агуулга:\n\n${pdfText}\n\nТА ЗӨВХӨН JSON ФОРМАТААР ХАРИУЛАХ ШААРДЛАГАТАЙ. JSON өгөгдлийн бүтэц дараах шаардлагуудыг хангасан байх ёстой: Бүлэг, Дэд бүлэг, болон тэдгээртэй холбоотой мэдээлэл агуулсан байх. Бүлэг болон дэд бүлгүүд нь хоорондын логик хамаарлаар зохион байгуулагдсан, шаталсан (hierarchical) бүтэцтэй байна. Хариу нь зөвхөн JSON объект байх ёстой бөгөөд дараах бүтэцтэй байх ёстой: { "groups": [{ "title": "string", "content": "string", "subgroups": [{ "title": "string", "content": "string" }] }] }`
             : `You are analyzing a document titled "${documentTitle}". Here is the content:\n\n${pdfText}\n\nYOU MUST RESPOND WITH ONLY JSON FORMAT. The JSON data structure should organize content into groups and subgroups, where each group and subgroup has a title and related content. The structure should reflect the logical hierarchy between groups and subgroups. The response must be a valid JSON object with the following structure: { "groups": [{ "title": "string", "content": "string", "subgroups": [{ "title": "string", "content": "string" }] }] }`;
 
-          const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer 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`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              model: "meta-llama/llama-4-maverick:free",
-              messages: [
-                {
-                  role: "system",
-                  content: systemMessage
-                }
-              ]
-            }),
-          });
+          const response = await fetch(
+            "https://openrouter.ai/api/v1/chat/completions",
+            {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer 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`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                model: "openai/gpt-4.1-mini",
+                messages: [
+                  {
+                    role: "system",
+                    content: systemMessage,
+                  },
+                ],
+              }),
+            }
+          );
 
           if (!response.ok) {
             throw new Error('Failed to analyze document');

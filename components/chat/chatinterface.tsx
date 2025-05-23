@@ -83,11 +83,11 @@ export default function ChatInterface() {
       const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
         headers: {
-          Authorization: `Bearer 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`,
+          Authorization: `Bearer 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`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "meta-llama/llama-4-maverick:free",
+          model: "openai/gpt-4.1-mini",
           messages: [
             {
               role: "system",
