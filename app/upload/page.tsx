@@ -11,10 +11,12 @@ import {
   Mic,
   MicOff,
   StopCircle,
+  Clock,
+  File,
 } from "lucide-react";
 import Nav from "@/components/upload/nav";
-import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import SpeechToText from "@/components/speechToText/speech";
 
 interface FileWithPreview extends File {
@@ -41,16 +43,36 @@ export default function UploadPage() {
   >("Upload File");
   const [text, setText] = useState<string>("");
   const [isHovering, setIsHovering] = useState<boolean>(false);
-  const [selectedFile, setSelectedFile] = useState<FileWithPreview | null>(null);
+  const [selectedFile, setSelectedFile] = useState<FileWithPreview | null>(
+    null
+  );
   const [showFileSelector, setShowFileSelector] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [selectedLanguage, setSelectedLanguage] = useState<string>("en");
   const [transcribedText, setTranscribedText] = useState<string>("");
+  const [history, setHistory] = useState<any[]>([]);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  console.log(transcribedText);
+  console.log(history);
+
+  useEffect(() => {
+    const fetchHistory = async () => {
+      try {
+        const res = await fetch("/api/user/history");
+        if (!res.ok) {
+          throw new Error("Failed to fetch history");
+        }
+        const data = await res.json();
+        setHistory(data.history);
+      } catch (error) {
+        console.error("Error fetching history:", error);
+      }
+    };
+
+    fetchHistory();
+  }, []);
 
   useEffect(() => {
     console.log("Canvas ref updated:", !!canvasRef.current);
@@ -177,32 +199,71 @@ export default function UploadPage() {
     <div className="min-h-screen text-white flex-col">
       <div className="min-h-screen w-full absolute z-1 blur-shape"></div>
       <div className="blur-shape-left"></div>
-      <div className="grid-bg"></div>
       <div className="container mx-auto px-4 py-6 z-10 relative">
         <Nav />
         <div
           className="flex flex-col md:flex-row"
-          style={{ boxShadow: "0 20px 40px rgba(0, 20, 50, 0.8)" }}
-        >
-          <div className="w-full md:w-64 bg-slate-900 bg-opacity-80 rounded-t-lg md:rounded-l-lg md:rounded-tr-none">
-            <div className="p-4 border-b border-slate-700">
-              <h2 className="font-semibold">History</h2>
+          style={{ boxShadow: "0 20px 40px rgba(0, 20, 50, 0.8)" }}>
+          {/* Improved History Section */}
+          <div className="w-full md:w-72 bg-gradient-to-b from-slate-900 to-slate-800 bg-opacity-95 rounded-t-lg md:rounded-l-lg md:rounded-tr-none border border-slate-700 border-opacity-50">
+            <div className="p-4 border-b border-slate-600 bg-gradient-to-r from-blue-900/20 to-purple-900/20">
+              <div className="flex items-center space-x-2">
+                <Clock size={18} className="text-blue-400" />
+                <h2 className="font-semibold text-blue-100">Recent History</h2>
+              </div>
             </div>
-            <div className="py-2 overflow-x-auto whitespace-nowrap md:whitespace-normal md:overflow-x-visible">
-              <div className="px-4 py-2 text-sm bg-blue-500 bg-opacity-20">
-                Today
-              </div>
-              <div className="px-4 py-2 text-sm hover:bg-slate-800 cursor-pointer">
-                Convert pdf to word free
-              </div>
-              <div className="px-4 py-2 text-sm hover:bg-slate-800 cursor-pointer">
-                What is a moonbow
-              </div>
-              <div className="px-4 py-2 text-sm hover:bg-slate-800 cursor-pointer">
-                Recipes with only bread...
-              </div>
+            <div className="py-2 max-h-96 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-slate-800">
+              {history.length > 0 ? (
+                history.map((item: any, index: number) => (
+                  <div
+                    key={item.id}
+                    className="mx-2 mb-2 p-3 rounded-lg bg-slate-800/50 hover:bg-slate-700/70 cursor-pointer transition-all duration-200 border border-slate-700/30 hover:border-blue-500/30 group"
+                    style={{ 
+                      boxShadow: "0 2px 8px rgba(0, 0, 0, 0.3)" 
+                    }}
+                    onClick={() => {
+                      localStorage.setItem("pdfText", item.content);
+                      localStorage.setItem("documentTitle", item.title);
+                      localStorage.setItem("selectedLanguage", selectedLanguage);
+                      localStorage.setItem(
+                        "initialMessage",
+                        selectedLanguage === "mn"
+                          ? ` ${item.title} баримт бичгийг тайлбарлана уу.`
+                          : `Please analyze this document: ${item.title}`
+                      );
+                      router.push("/chat");
+                    }}>
+                    <div className="flex items-start space-x-3">
+                      <div className="flex-shrink-0 w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform duration-200">
+                        <File size={14} className="text-white" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-sm font-medium text-white truncate group-hover:text-blue-300 transition-colors">
+                          {item.title}
+                        </h3>
+                        <p className="text-xs text-slate-400 mt-1 line-clamp-2">
+                          {item.content?.substring(0, 80)}...
+                        </p>
+                        <div className="flex items-center mt-2 text-xs text-slate-500">
+                          <Clock size={12} className="mr-1" />
+                          <span>{new Date(item.createdAt).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="p-6 text-center">
+                  <div className="w-12 h-12 bg-slate-700 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <FileText size={20} className="text-slate-400" />
+                  </div>
+                  <p className="text-slate-400 text-sm">No history yet</p>
+                  <p className="text-slate-500 text-xs mt-1">Your analyzed documents will appear here</p>
+                </div>
+              )}
             </div>
           </div>
+
           <div className="flex-1 bg-slate-900 bg-opacity-50 rounded-b-lg md:rounded-r-lg md:rounded-bl-none p-4 md:p-6">
             <h2 className="text-xl font-semibold mb-4 md:mb-6">AI analyzer</h2>
             <div className="flex mb-4 md:mb-6">
@@ -210,16 +271,14 @@ export default function UploadPage() {
                 className={`flex-1 py-2 md:py-3 text-center rounded-l-md border border-slate-700 text-sm md:text-base ${
                   activeTab === "Upload File" ? "bg-slate-800" : "bg-slate-900"
                 }`}
-                onClick={() => setActiveTab("Upload File")}
-              >
+                onClick={() => setActiveTab("Upload File")}>
                 Upload File
               </button>
               <button
                 className={`flex-1 py-2 md:py-3 text-center border-t border-b border-slate-700 text-sm md:text-base ${
                   activeTab === "Microphone" ? "bg-slate-800" : "bg-slate-900"
                 }`}
-                onClick={() => setActiveTab("Microphone")}
-              >
+                onClick={() => setActiveTab("Microphone")}>
                 <div className="flex items-center justify-center">
                   <Mic size={16} className="mr-1" />
                   <span>Microphone</span>
@@ -229,8 +288,7 @@ export default function UploadPage() {
                 className={`flex-1 py-2 md:py-3 text-center rounded-r-md border border-slate-700 text-sm md:text-base ${
                   activeTab === "Enter Text" ? "bg-slate-800" : "bg-slate-900"
                 }`}
-                onClick={() => setActiveTab("Enter Text")}
-              >
+                onClick={() => setActiveTab("Enter Text")}>
                 Enter Text
               </button>
             </div>
@@ -257,8 +315,7 @@ export default function UploadPage() {
                     }}
                     onMouseEnter={() => setIsHovering(true)}
                     onMouseLeave={() => setIsHovering(false)}
-                    onClick={selectedFile ? openFileSelector : selectFile}
-                  >
+                    onClick={selectedFile ? openFileSelector : selectFile}>
                     {selectedFile ? (
                       <>
                         <FileText
@@ -281,8 +338,7 @@ export default function UploadPage() {
                           className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-blue-600 bg-opacity-50 flex items-center justify-center whim mb-2 md:mb-4"
                           style={{
                             boxShadow: "0 0 20px rgba(0, 80, 120, 0.7)",
-                          }}
-                        >
+                          }}>
                           <Upload
                             size={20}
                             className="text-blue-200 md:hidden"
@@ -303,8 +359,7 @@ export default function UploadPage() {
                             className="mt-3 md:mt-4 px-4 md:px-6 py-1 md:py-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-md hover:from-blue-600 hover:to-purple-600 transition-colors text-white font-medium text-xs md:text-base"
                             style={{
                               boxShadow: "0 5px 20px rgba(0, 30, 70, 0.8)",
-                            }}
-                          >
+                            }}>
                             Select File
                           </button>
                         )}
@@ -314,16 +369,14 @@ export default function UploadPage() {
                 ) : (
                   <div
                     className="border-2 border-blue-500 rounded-md h-60 md:h-80 p-3 md:p-4 bg-gradient-to-br from-blue-900 to-purple-900 bg-opacity-30"
-                    style={{ boxShadow: "0 10px 30px rgba(0, 20, 60, 0.7)" }}
-                  >
+                    style={{ boxShadow: "0 10px 30px rgba(0, 20, 60, 0.7)" }}>
                     <div className="flex justify-between items-center mb-3 md:mb-4 pb-2 border-b border-blue-700">
                       <h3 className="font-medium text-blue-200 text-sm md:text-base">
                         Select a file
                       </h3>
                       <button
                         onClick={() => setShowFileSelector(false)}
-                        className="text-blue-300 hover:text-white text-sm md:text-base"
-                      >
+                        className="text-blue-300 hover:text-white text-sm md:text-base">
                         Cancel
                       </button>
                     </div>
@@ -331,8 +384,7 @@ export default function UploadPage() {
                       <div
                         className="flex flex-col items-center justify-center p-2 md:p-4 border border-blue-700 rounded-md hover:bg-blue-700 hover:bg-opacity-30 cursor-pointer bg-blue-800 bg-opacity-20"
                         style={{ boxShadow: "0 5px 15px rgba(0, 30, 70, 0.8)" }}
-                        onClick={selectFile}
-                      >
+                        onClick={selectFile}>
                         <Folder
                           size={24}
                           className="mb-1 md:mb-2 text-blue-300 md:hidden"
@@ -350,8 +402,7 @@ export default function UploadPage() {
                         style={{
                           boxShadow: "0 5px 15px rgba(0, 128, 255, 1 CONV)",
                         }}
-                        onClick={selectFile}
-                      >
+                        onClick={selectFile}>
                         <Folder
                           size={24}
                           className="mb-1 md:mb-2 text-blue-300 md:hidden"
@@ -375,8 +426,7 @@ export default function UploadPage() {
             ) : (
               <div
                 className="border border-slate-700 rounded-md h-60 md:h-80 flex flex-col bg-blue-950 bg-opacity-20"
-                style={{ boxShadow: "0 10px 30px rgba(0, 64, 255, 1)" }}
-              >
+                style={{ boxShadow: "0 10px 30px rgba(0, 64, 255, 1)" }}>
                 <textarea
                   className="w-full h-full p-3 md:p-4 bg-slate-800 rounded-md resize-none focus:outline-none focus:ring-1 focus:ring-blue-400 text-sm md:text-base"
                   placeholder="Enter your text here for analysis..."
@@ -387,8 +437,7 @@ export default function UploadPage() {
                   <div className="mt-2 flex justify-end">
                     <button
                       onClick={downloadTextAsFile}
-                      className="text-xs md:text-sm text-blue-400 hover:text-blue-300 flex items-center"
-                    >
+                      className="text-xs md:text-sm text-blue-400 hover:text-blue-300 flex items-center">
                       Download as text file
                     </button>
                   </div>
@@ -399,8 +448,7 @@ export default function UploadPage() {
               <select
                 className="bg-slate-900 border border-slate-700 rounded-md px-3 md:px-4 py-1 md:py-2 w-24 md:w-32 text-sm md:text-base"
                 value={selectedLanguage}
-                onChange={(e) => setSelectedLanguage(e.target.value)}
-              >
+                onChange={(e) => setSelectedLanguage(e.target.value)}>
                 <option value="en">English</option>
                 <option value="mn">Монгол</option>
               </select>
@@ -413,8 +461,7 @@ export default function UploadPage() {
                 (activeTab === "Microphone" && !transcribedText) ||
                 isLoading
               }
-              onClick={handleRunAnalyze}
-            >
+              onClick={handleRunAnalyze}>
               {isLoading ? "Processing..." : "Run analyze"}
             </button>
           </div>

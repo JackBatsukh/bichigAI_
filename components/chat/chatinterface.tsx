@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { useState, useEffect, useRef } from "react";
 import MessageItem from "./chatitems";
@@ -15,7 +15,9 @@ export default function ChatInterface() {
   const [isNearBottom, setIsNearBottom] = useState(true);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const [isNewMessage, setIsNewMessage] = useState(false);
-  const [stars, setStars] = useState<Array<{ top: string; left: string; delay: string; duration: string }>>([]);
+  const [stars, setStars] = useState<
+    Array<{ top: string; left: string; delay: string; duration: string }>
+  >([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -63,7 +65,8 @@ export default function ChatInterface() {
 
   const handleScroll = () => {
     if (chatContainerRef.current) {
-      const { scrollTop, scrollHeight, clientHeight } = chatContainerRef.current;
+      const { scrollTop, scrollHeight, clientHeight } =
+        chatContainerRef.current;
       setIsNearBottom(scrollHeight - scrollTop - clientHeight < 150);
     }
   };
@@ -83,11 +86,11 @@ export default function ChatInterface() {
       const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
         headers: {
-          Authorization: `Bearer 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`,
+          Authorization: `Bearer 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`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          model: "openai/gpt-4.1-mini",
+          model: "meta-llama/llama-4-maverick:free",
           messages: [
             {
               role: "system",
@@ -118,7 +121,10 @@ export default function ChatInterface() {
           ? "Уучлаарай, хариулт өгөх боломжгүй байна. Дахин оролдоно уу."
           : "Sorry, I couldn't process that. Please try again.";
 
-      setMessages((prev) => [...prev, { role: "assistant", content: errorMessage }]);
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: errorMessage },
+      ]);
     } finally {
       setIsLoading(false);
     }
@@ -157,7 +163,7 @@ export default function ChatInterface() {
   return (
     <div className="min-h-screen p-4 sm:p-6 text-white relative bg-gradient-to-b from-gray-900 to-black">
       {/* Background effects */}
-      <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
+      <div className="grid-bg"></div>
 
       {/* Stars */}
       <div className="stars-container">

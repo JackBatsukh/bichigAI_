@@ -14,18 +14,6 @@ export default function AdminLayout({
   const router = useRouter();
   const pathname = usePathname();
 
-  // useEffect(() => {
-  //   if (pathname === "/admin/home") return;
-
-  //   const isAuthenticated = localStorage.getItem("isAuthenticated");
-  //   if (!isAuthenticated) {
-  //     router.push("/admin/home");
-  //   }
-  // }, [router, pathname]);
-
-  // if (pathname === "/admin/login") {
-  //   return <>{children}</>;
-  // }
 
   return (
     <div className="flex h-screen">

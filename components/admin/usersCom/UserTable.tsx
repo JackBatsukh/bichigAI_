@@ -11,18 +11,22 @@ interface User {
   lastLogin: string;
 }
 
-export default function UserTable() {
+interface UserTableProps {
+  searchQuery: string;
+}
+
+export default function UserTable({ searchQuery }: UserTableProps) {
   const [users, setUsers] = useState<User[]>([]);
 
   useEffect(() => {
     const fetchUsers = async () => {
-      const res = await fetch("/api/user");
+      const res = await fetch(`/api/user?search=${searchQuery}`);
       const data = await res.json();
       setUsers(data);
     };
 
     fetchUsers();
-  }, []);
+  }, [searchQuery]);
 
   const handleDeleteUser = async (id: string) => {
     const res = await fetch("/api/user/delete", {
@@ -98,7 +102,8 @@ export default function UserTable() {
                     user.status === "active"
                       ? "bg-green-100 text-green-800"
                       : "bg-red-100 text-red-800"
-                  }`}>
+                  }`}
+                >
                   {user.status === "active" ? "Идэвхтэй" : "Идэвхгүй"}
                 </span>
               </td>
@@ -108,7 +113,8 @@ export default function UserTable() {
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                 <button
                   className="text-red-600 hover:text-red-900"
-                  onClick={() => handleDeleteUser(user.id)}>
+                  onClick={() => handleDeleteUser(user.id)}
+                >
                   Устгах
                 </button>
               </td>
