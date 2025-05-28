@@ -99,11 +99,11 @@ export default function Roadmap() {
             {
               method: "POST",
               headers: {
-                Authorization: `Bearer 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`,
+                Authorization: `Bearer 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`,
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                model: "meta-llama/llama-4-maverick:free",
+                model: `openai/gpt-4.1-mini`,
                 messages: [
                   {
                     role: "system",

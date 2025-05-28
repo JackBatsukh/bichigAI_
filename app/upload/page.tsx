@@ -42,42 +42,52 @@ interface HistoryItem {
 }
 
 // SpeechToText Component
-const SpeechToText: React.FC<{ onTranscriptChange: (transcript: string) => void; selectedLanguage: string }> = ({
-  onTranscriptChange,
-  selectedLanguage,
-}) => {
+const SpeechToText: React.FC<{
+  onTranscriptChange: (transcript: string) => void;
+  selectedLanguage: string;
+}> = ({ onTranscriptChange, selectedLanguage }) => {
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [timer, setTimer] = useState<number>(0);
   const [transcript, setTranscript] = useState<string>("");
   const [error, setError] = useState<string | null>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const finalTranscriptRef = useRef<string>("");
+  const isStoppingRef = useRef<boolean>(false);
 
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
     const secs = seconds % 60;
-    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+    return `${mins.toString().padStart(2, "0")}:${secs
+      .toString()
+      .padStart(2, "0")}`;
   };
 
   useEffect(() => {
     const SpeechRecognitionAPI =
       typeof window !== "undefined" &&
-      ((window as any).SpeechRecognition || (window as any).webkitSpeechRecognition);
+      ((window as any).SpeechRecognition ||
+        (window as any).webkitSpeechRecognition);
     if (SpeechRecognitionAPI) {
       try {
-        recognitionRef.current = new SpeechRecognitionAPI() as SpeechRecognition;
+        recognitionRef.current =
+          new SpeechRecognitionAPI() as SpeechRecognition;
         recognitionRef.current.continuous = true;
         recognitionRef.current.interimResults = true;
-        recognitionRef.current.lang = selectedLanguage === "mn" ? "mn-MN" : "en-US";
+        recognitionRef.current.lang =
+          selectedLanguage === "mn" ? "mn-MN" : "en-US";
 
         recognitionRef.current.onresult = (event: SpeechRecognitionEvent) => {
+          if (isStoppingRef.current) return; // Ignore results while stopping
+
           let interimTranscript = "";
-          let finalTranscript = "";
+          let finalTranscript = finalTranscriptRef.current;
 
           for (let i = event.resultIndex; i < event.results.length; i++) {
             const transcript = event.results[i][0].transcript;
             if (event.results[i].isFinal) {
               finalTranscript += transcript + " ";
+              finalTranscriptRef.current = finalTranscript;
             } else {
               interimTranscript += transcript;
             }
@@ -86,7 +96,6 @@ const SpeechToText: React.FC<{ onTranscriptChange: (transcript: string) => void;
           const combinedTranscript = finalTranscript + interimTranscript;
           setTranscript(combinedTranscript);
           onTranscriptChange(combinedTranscript);
-          console.log("Transcript updated:", combinedTranscript);
         };
 
         recognitionRef.current.onerror = (event: Event) => {
@@ -100,7 +109,7 @@ const SpeechToText: React.FC<{ onTranscriptChange: (transcript: string) => void;
         };
 
         recognitionRef.current.onend = () => {
-          if (isRecording && recognitionRef.current) {
+          if (isRecording && !isStoppingRef.current && recognitionRef.current) {
             console.log("Recognition ended, restarting...");
             try {
               recognitionRef.current.start();
@@ -161,9 +170,11 @@ const SpeechToText: React.FC<{ onTranscriptChange: (transcript: string) => void;
   const startRecording = () => {
     if (recognitionRef.current && !isRecording) {
       try {
+        isStoppingRef.current = false;
         setIsRecording(true);
         setTimer(0);
         setTranscript("");
+        finalTranscriptRef.current = "";
         setError(null);
         recognitionRef.current.start();
         console.log("Recording started");
@@ -182,6 +193,7 @@ const SpeechToText: React.FC<{ onTranscriptChange: (transcript: string) => void;
   const stopRecording = () => {
     if (recognitionRef.current && isRecording) {
       try {
+        isStoppingRef.current = true;
         recognitionRef.current.stop();
         setIsRecording(false);
         console.log("Recording stopped");
@@ -192,9 +204,7 @@ const SpeechToText: React.FC<{ onTranscriptChange: (transcript: string) => void;
   };
 
   return (
-    <div
-      className="flex flex-col items-center justify-between h-60 md:h-80 bg-gradient-to-br from-blue-900 to-purple-900 bg-opacity-30 rounded-md border-2 border-blue-500 p-4 shadow-lg"
-    >
+    <div className="flex flex-col items-center justify-between h-60 md:h-80 bg-gradient-to-br from-blue-900 to-purple-900 bg-opacity-30 rounded-md border-2 border-blue-500 p-4 shadow-lg">
       {error ? (
         <div className="flex-1 flex items-center justify-center text-red-400 text-sm md:text-base text-center">
           {error}
@@ -205,14 +215,24 @@ const SpeechToText: React.FC<{ onTranscriptChange: (transcript: string) => void;
             <button
               onClick={isRecording ? stopRecording : startRecording}
               className={`p-3 md:p-4 rounded-full bg-gradient-to-r ${
-                isRecording ? "from-red-600 to-red-700" : "from-blue-600 to-purple-600"
+                isRecording
+                  ? "from-red-600 to-red-700"
+                  : "from-blue-600 to-purple-600"
               } hover:from-blue-700 hover:to-purple-700 transition-colors shadow-md`}
             >
-              {isRecording ? <StopCircle size={24} className="text-white" /> : <Mic size={24} className="text-white" />}
+              {isRecording ? (
+                <StopCircle size={24} className="text-white" />
+              ) : (
+                <Mic size={24} className="text-white" />
+              )}
             </button>
             <div className="text-blue-200 text-lg md:text-xl font-semibold">
               {isRecording
-                ? `${selectedLanguage === "mn" ? "Бичлэг хийж байна" : "Recording"}: ${formatTime(timer)}`
+                ? `${
+                    selectedLanguage === "mn"
+                      ? "Бичлэг хийж байна"
+                      : "Recording"
+                  }: ${formatTime(timer)}`
                 : selectedLanguage === "mn"
                 ? "Бичлэг эхлүүлэх"
                 : "Start Recording"}
@@ -220,11 +240,11 @@ const SpeechToText: React.FC<{ onTranscriptChange: (transcript: string) => void;
           </div>
           <div className="w-full flex-1 mt-4">
             <h3 className="text-blue-100 text-sm md:text-base font-medium mb-2">
-              {selectedLanguage === "mn" ? "Хөрвүүлсэн Текст" : "Transcribed Text"}
+              {selectedLanguage === "mn"
+                ? "Хөрвүүлсэн Текст"
+                : "Transcribed Text"}
             </h3>
-            <div
-              className="w-full h-32 md:h-48 bg-slate-800 rounded-md p-3 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-slate-800 text-blue-300 text-sm md:text-base shadow-md"
-            >
+            <div className="w-full h-32 md:h-48 bg-slate-800 rounded-md p-3 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-600 scrollbar-track-slate-800 text-blue-300 text-sm md:text-base shadow-md">
               {transcript ? (
                 transcript
               ) : (
@@ -250,10 +270,14 @@ const SpeechToText: React.FC<{ onTranscriptChange: (transcript: string) => void;
 export default function UploadPage() {
   const router = useRouter();
   const { data: session, status } = useSession();
-  const [activeTab, setActiveTab] = useState<"Upload File" | "Microphone" | "Enter Text">("Upload File");
+  const [activeTab, setActiveTab] = useState<
+    "Upload File" | "Microphone" | "Enter Text"
+  >("Upload File");
   const [text, setText] = useState<string>("");
   const [isHovering, setIsHovering] = useState<boolean>(false);
-  const [selectedFile, setSelectedFile] = useState<FileWithPreview | null>(null);
+  const [selectedFile, setSelectedFile] = useState<FileWithPreview | null>(
+    null
+  );
   const [showFileSelector, setShowFileSelector] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [selectedLanguage, setSelectedLanguage] = useState<string>("en");
@@ -368,7 +392,8 @@ export default function UploadPage() {
         );
       }
 
-      const contentToAnalyze = activeTab === "Microphone" ? transcribedText : text;
+      const contentToAnalyze =
+        activeTab === "Microphone" ? transcribedText : text;
 
       if (activeTab === "Upload File" && selectedFile) {
         const formData = new FormData();
@@ -412,7 +437,10 @@ export default function UploadPage() {
         }
       } else if (contentToAnalyze) {
         localStorage.setItem("pdfText", contentToAnalyze);
-        localStorage.setItem("documentTitle", selectedLanguage === "mn" ? "Текстийн Шинжилгээ" : "Text Analysis");
+        localStorage.setItem(
+          "documentTitle",
+          selectedLanguage === "mn" ? "Текстийн Шинжилгээ" : "Text Analysis"
+        );
         localStorage.setItem("selectedLanguage", selectedLanguage);
         localStorage.setItem(
           "initialMessage",
@@ -466,7 +494,9 @@ export default function UploadPage() {
               <div className="flex items-center space-x-2">
                 <Clock size={18} className="text-blue-400" />
                 <h2 className="font-semibold text-blue-100">
-                  {selectedLanguage === "mn" ? "Сүүлийн Түүх" : "Recent History"}
+                  {selectedLanguage === "mn"
+                    ? "Сүүлийн Түүх"
+                    : "Recent History"}
                 </h2>
               </div>
             </div>
@@ -505,14 +535,22 @@ export default function UploadPage() {
                       localStorage.setItem("pdfText", item.content || "");
                       localStorage.setItem(
                         "documentTitle",
-                        item.title || (selectedLanguage === "mn" ? "Гарчиггүй" : "Untitled")
+                        item.title ||
+                          (selectedLanguage === "mn" ? "Гарчиггүй" : "Untitled")
                       );
-                      localStorage.setItem("selectedLanguage", selectedLanguage);
+                      localStorage.setItem(
+                        "selectedLanguage",
+                        selectedLanguage
+                      );
                       localStorage.setItem(
                         "initialMessage",
                         selectedLanguage === "mn"
-                          ? `${item.title || "Гарчиггүй"} баримт бичгийг тайлбарлана уу.`
-                          : `Please analyze this document: ${item.title || "Untitled"}`
+                          ? `${
+                              item.title || "Гарчиггүй"
+                            } баримт бичгийг тайлбарлана уу.`
+                          : `Please analyze this document: ${
+                              item.title || "Untitled"
+                            }`
                       );
                       router.push("/chat");
                     }}
@@ -523,11 +561,16 @@ export default function UploadPage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <h3 className="text-sm font-medium text-white truncate">
-                          {item.title || (selectedLanguage === "mn" ? "Гарчиггүй" : "Untitled")}
+                          {item.title ||
+                            (selectedLanguage === "mn"
+                              ? "Гарчиггүй"
+                              : "Untitled")}
                         </h3>
                         <p className="text-xs text-slate-400 mt-1 line-clamp-2">
                           {(item.content?.substring(0, 80) ||
-                            (selectedLanguage === "mn" ? "Агуулга байхгүй" : "No content")) + "..."}
+                            (selectedLanguage === "mn"
+                              ? "Агуулга байхгүй"
+                              : "No content")) + "..."}
                         </p>
                         <div className="flex items-center mt-2 text-xs text-slate-500">
                           <Clock size={12} className="mr-1" />
@@ -551,7 +594,9 @@ export default function UploadPage() {
                     <FileText size={20} className="text-slate-400" />
                   </div>
                   <p className="text-slate-400 text-sm">
-                    {selectedLanguage === "mn" ? "Одоогоор түүх байхгүй" : "No history yet"}
+                    {selectedLanguage === "mn"
+                      ? "Одоогоор түүх байхгүй"
+                      : "No history yet"}
                   </p>
                   <p className="text-slate-500 text-xs mt-1">
                     {selectedLanguage === "mn"
@@ -564,9 +609,14 @@ export default function UploadPage() {
           </div>
 
           {/* Main Content (AI Analyzer) */}
-          <div ref={analyzerRef} className="flex-1 bg-slate-900/95 rounded-lg p-4 md:p-6 shadow-lg">
+          <div
+            ref={analyzerRef}
+            className="flex-1 bg-slate-900/95 rounded-lg p-4 md:p-6 shadow-lg"
+          >
             <h2 className="text-xl font-semibold mb-4 md:mb-6">
-              {selectedLanguage === "mn" ? "Хиймэл Оюуны Шинжээч" : "AI Analyzer"}
+              {selectedLanguage === "mn"
+                ? "Хиймэл Оюуны Шинжээч"
+                : "AI Analyzer"}
             </h2>
             {error && (
               <div className="mb-4 p-3 bg-red-900/50 rounded-md text-red-300 text-sm">
@@ -590,7 +640,9 @@ export default function UploadPage() {
               >
                 <div className="flex items-center justify-center">
                   <Mic size={16} className="mr-1" />
-                  <span>{selectedLanguage === "mn" ? "Микрофон" : "Microphone"}</span>
+                  <span>
+                    {selectedLanguage === "mn" ? "Микрофон" : "Microphone"}
+                  </span>
                 </div>
               </button>
               <button
@@ -624,7 +676,10 @@ export default function UploadPage() {
                   >
                     {selectedFile ? (
                       <>
-                        <FileText size={24} className="mb-2 md:mb-4 text-blue-300" />
+                        <FileText
+                          size={24}
+                          className="mb-2 md:mb-4 text-blue-300"
+                        />
                         <p className="text-center mb-1 text-blue-100 text-sm md:text-base">
                           {selectedFile.name}
                         </p>
@@ -632,16 +687,22 @@ export default function UploadPage() {
                           {(selectedFile.size / 1024).toFixed(1)} KB
                         </p>
                         <button className="mt-2 md:mt-4 text-blue-300 text-xs md:text-sm hover:underline">
-                          {selectedLanguage === "mn" ? "Файлыг солих" : "Change file"}
+                          {selectedLanguage === "mn"
+                            ? "Файлыг солих"
+                            : "Change file"}
                         </button>
                       </>
                     ) : (
                       <>
-                        <div
-                          className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-blue-600 bg-opacity-50 flex items-center justify-center mb-2 md:mb-4 shadow-md"
-                        >
-                          <Upload size={20} className="text-blue-200 md:hidden" />
-                          <Upload size={32} className="text-blue-200 hidden md:block" />
+                        <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-blue-600 bg-opacity-50 flex items-center justify-center mb-2 md:mb-4 shadow-md">
+                          <Upload
+                            size={20}
+                            className="text-blue-200 md:hidden"
+                          />
+                          <Upload
+                            size={32}
+                            className="text-blue-200 hidden md:block"
+                          />
                         </div>
                         <p className="text-center mb-1 text-blue-100 font-medium text-sm md:text-base">
                           {selectedLanguage === "mn"
@@ -652,22 +713,22 @@ export default function UploadPage() {
                           {selectedLanguage === "mn" ? "шинжилгээ" : "analyze"}
                         </p>
                         {isHovering && (
-                          <button
-                            className="mt-3 md:mt-4 px-4 md:px-6 py-1 md:py-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-md hover:from-blue-600 hover:to-purple-600 transition-colors text-white font-medium text-xs md:text-base shadow-md"
-                          >
-                            {selectedLanguage === "mn" ? "Файл сонгох" : "Select File"}
+                          <button className="mt-3 md:mt-4 px-4 md:px-6 py-1 md:py-2 bg-gradient-to-r from-blue-500 to-purple-500 rounded-md hover:from-blue-600 hover:to-purple-600 transition-colors text-white font-medium text-xs md:text-base shadow-md">
+                            {selectedLanguage === "mn"
+                              ? "Файл сонгох"
+                              : "Select File"}
                           </button>
                         )}
                       </>
                     )}
                   </div>
                 ) : (
-                  <div
-                    className="border-2 border-blue-500 rounded-md h-60 md:h-80 p-3 md:p-4 bg-gradient-to-br from-blue-900 to-purple-900 bg-opacity-30 shadow-lg"
-                  >
+                  <div className="border-2 border-blue-500 rounded-md h-60 md:h-80 p-3 md:p-4 bg-gradient-to-br from-blue-900 to-purple-900 bg-opacity-30 shadow-lg">
                     <div className="flex justify-between items-center mb-3 md:mb-4 pb-2 border-b border-blue-700">
                       <h3 className="font-medium text-blue-200 text-sm md:text-base">
-                        {selectedLanguage === "mn" ? "Файл сонгох" : "Select a file"}
+                        {selectedLanguage === "mn"
+                          ? "Файл сонгох"
+                          : "Select a file"}
                       </h3>
                       <button
                         onClick={() => setShowFileSelector(false)}
@@ -681,8 +742,14 @@ export default function UploadPage() {
                         className="flex flex-col items-center justify-center p-2 md:p-4 border border-blue-700 rounded-md hover:bg-blue-700 hover:bg-opacity-30 cursor-pointer bg-blue-800 bg-opacity-20 shadow-md"
                         onClick={selectFile}
                       >
-                        <Folder size={24} className="mb-1 md:mb-2 text-blue-300 md:hidden" />
-                        <Folder size={40} className="mb-2 text-blue-300 hidden md:block" />
+                        <Folder
+                          size={24}
+                          className="mb-1 md:mb-2 text-blue-300 md:hidden"
+                        />
+                        <Folder
+                          size={40}
+                          className="mb-2 text-blue-300 hidden md:block"
+                        />
                         <p className="text-blue-100 text-sm md:text-base">
                           {selectedLanguage === "mn" ? "Компьютер" : "Computer"}
                         </p>
@@ -691,10 +758,18 @@ export default function UploadPage() {
                         className="flex flex-col items-center justify-center p-2 md:p-4 border border-blue-700 rounded-md hover:bg-blue-700 hover:bg-opacity-30 cursor-pointer bg-blue-800 bg-opacity-20 shadow-md"
                         onClick={selectFile}
                       >
-                        <Folder size={24} className="mb-1 md:mb-2 text-blue-300 md:hidden" />
-                        <Folder size={40} className="mb-2 text-blue-300 hidden md:block" />
+                        <Folder
+                          size={24}
+                          className="mb-1 md:mb-2 text-blue-300 md:hidden"
+                        />
+                        <Folder
+                          size={40}
+                          className="mb-2 text-blue-300 hidden md:block"
+                        />
                         <p className="text-blue-100 text-sm md:text-base">
-                          {selectedLanguage === "mn" ? "Ширээний компьютер" : "Desktop"}
+                          {selectedLanguage === "mn"
+                            ? "Ширээний компьютер"
+                            : "Desktop"}
                         </p>
                       </div>
                     </div>
@@ -702,11 +777,12 @@ export default function UploadPage() {
                 )}
               </>
             ) : activeTab === "Microphone" ? (
-              <SpeechToText onTranscriptChange={setTranscribedText} selectedLanguage={selectedLanguage} />
+              <SpeechToText
+                onTranscriptChange={setTranscribedText}
+                selectedLanguage={selectedLanguage}
+              />
             ) : (
-              <div
-                className="border border-slate-700 rounded-md h-60 md:h-80 flex flex-col bg-blue-950 bg-opacity-20 shadow-lg"
-              >
+              <div className="border border-slate-700 rounded-md h-60 md:h-80 flex flex-col bg-blue-950 bg-opacity-20 shadow-lg">
                 <textarea
                   className="w-full h-full p-3 md:p-4 bg-slate-800 rounded-md resize-none focus:outline-none focus:ring-1 focus:ring-blue-400 text-sm md:text-base"
                   placeholder={
