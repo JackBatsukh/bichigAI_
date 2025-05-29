@@ -52,7 +52,6 @@ export default function Roadmap() {
       }
 
       const parsedData = JSON.parse(jsonContent);
-      console.log("Parsed JSON:", parsedData);
 
       if (!parsedData.groups || !Array.isArray(parsedData.groups)) {
         throw new Error("Invalid response format: missing groups array");
@@ -99,7 +98,7 @@ export default function Roadmap() {
             {
               method: "POST",
               headers: {
-                Authorization: `Bearer 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`,
+                Authorization: `Bearer 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`,
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
@@ -120,11 +119,9 @@ export default function Roadmap() {
 
           const data = await response.json();
           const aiResponse = data.choices[0].message.content;
-          console.log("Raw AI Response:", aiResponse);
 
           // Transform and save the roadmap items
           const transformedItems = transformToRoadmapItems(data);
-          console.log("Transformed Roadmap Items:", transformedItems);
           setRoadmapItems(transformedItems);
 
           setMessages((prev) => [
@@ -244,9 +241,10 @@ export default function Roadmap() {
           <h2 className="text-2xl font-semibold text-white mb-4 text-center">
             Development Roadmap
           </h2>
-          <div className="relative">
+          {/* Desktop (with timeline line + zig-zag) */}
+          <div className="hidden lg:block relative">
             {/* Timeline Line */}
-            <div className="absolute left-1/2 transform -translate-x-1/2 w-1 bg-blue-700 h-full opacity-50"></div>
+            <div className="absolute left-1/2 transform -translate-x-1/2 w-1 bg-blue-700 h-full opacity-50 z-0"></div>
 
             {roadmapItems.map((item, index) => (
               <div
@@ -255,35 +253,55 @@ export default function Roadmap() {
                   index % 2 === 0 ? "flex-row" : "flex-row-reverse"
                 }`}
               >
-                {/* Timeline Content */}
+                {/* Card */}
                 <div
                   className={`w-1/2 p-4 ${
                     index % 2 === 0 ? "pr-8 text-right" : "pl-8 text-left"
                   }`}
                 >
                   <div
-                    className="bg-gray-900/80 rounded-lg p-5 shadow-xl backdrop-blur-sm border border-blue-800/30 hover:shadow-blue-900/20 transition-all duration-300 cursor-pointer"
+                    className="bg-gray-900/80 rounded-lg p-5 shadow-xl border border-blue-800/30 hover:shadow-blue-900/20 transition-all duration-300 cursor-pointer"
                     onClick={() => {
                       setSelectedItem(item);
                       setIsModalOpen(true);
                     }}
                   >
-                    <h3 className="text-xl font-semibold text-white">
+                    <h3 className="text-white text-[20px] font-semibold">
                       {item.title}
                     </h3>
-                    <p className="text-gray-300 text-sm mt-2">{item.content}</p>
+                    <p className="text-gray-300 text-[16px] mt-2">
+                      {item.content}
+                    </p>
                   </div>
                 </div>
 
-                {/* Timeline Dot */}
+                {/* Dot */}
                 <div className="w-8 h-8 relative">
                   <div className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full bg-blue-500 shadow-glow">
                     <div className="absolute inset-0 rounded-full bg-blue-500 opacity-30 animate-ping"></div>
                   </div>
                 </div>
 
-                {/* Spacer */}
                 <div className="w-1/2"></div>
+              </div>
+            ))}
+          </div>
+
+          {/* Mobile: Simple vertical layout without timeline line */}
+          <div className="block lg:hidden space-y-6 px-4 py-8">
+            {roadmapItems.map((item, index) => (
+              <div
+                key={index}
+                className="bg-gray-900/80 rounded-lg p-5 shadow-md border border-blue-800/30"
+                onClick={() => {
+                  setSelectedItem(item);
+                  setIsModalOpen(true);
+                }}
+              >
+                <h3 className="text-white text-[16px] font-semibold">
+                  {item.title}
+                </h3>
+                <p className="text-gray-300 text-[14px] mt-2">{item.content}</p>
               </div>
             ))}
           </div>
@@ -292,7 +310,7 @@ export default function Roadmap() {
         {/* Modal */}
         {isModalOpen && selectedItem && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-gray-900 rounded-lg p-6 w-full max-w-2xl mx-4 relative">
+            <div className="bg-gray-900 rounded-lg p-6 w-full max-w-2xl mx-4 relative max-h-screen overflow-y-auto">
               <button
                 onClick={() => setIsModalOpen(false)}
                 className="absolute top-4 right-4 text-gray-400 hover:text-white"

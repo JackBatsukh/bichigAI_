@@ -86,7 +86,7 @@ export default function ChatInterface() {
       const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
         headers: {
-          Authorization: `Bearer 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`,
+          Authorization: `Bearer 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`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -187,7 +187,7 @@ export default function ChatInterface() {
       <div className="max-w-[1440px] mx-auto relative z-10 flex flex-col">
         <Nav />
 
-        <div className="flex flex-col border border-blue-900/30 bg-black/30 rounded-lg shadow-xl backdrop-blur-sm h-[70vh] sm:h-[80vh] max-h-[90vh] overflow-hidden transition-all duration-300 hover:shadow-blue-900/20 hover:shadow-2xl">
+        <div className="flex flex-col border border-blue-900/30 bg-black/30 rounded-lg shadow-xl backdrop-blur-sm h-[85vh] sm:h-[80vh] max-h-[90vh] overflow-hidden transition-all duration-300 hover:shadow-blue-900/20 hover:shadow-2xl">
           <div
             ref={chatContainerRef}
             onScroll={handleScroll}

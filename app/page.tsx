@@ -31,7 +31,7 @@ export default function Home() {
         <HeroSection />
         <FeaturesGrid />
         <HowItWorks />
-        <PricingSection />
+        {/* <PricingSection /> */}
         <Footer />
       </main>
     </div>
