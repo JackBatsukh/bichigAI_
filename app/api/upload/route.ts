@@ -3,7 +3,7 @@ import pdf from "pdf-parse";
 import mammoth from "mammoth";
 import prisma from "@/lib/prisma";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
   try {

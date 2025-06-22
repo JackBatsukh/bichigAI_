@@ -1,10 +1,12 @@
 "use client";
+
 import UserTable from "@/components/admin/usersCom/UserTable";
 import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
-export default function UsersPage() {
+function UsersContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState(
@@ -13,7 +15,7 @@ export default function UsersPage() {
 
   useEffect(() => {
     const params = new URLSearchParams(searchParams.toString());
-    
+
     if (searchQuery.trim()) {
       params.set("search", searchQuery.trim());
     } else {
@@ -22,6 +24,14 @@ export default function UsersPage() {
 
     router.push(`/admin/users?${params.toString()}`);
   }, [searchQuery, router, searchParams]);
+
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    if (session?.user.role == "USER") {
+      router.push("/");
+    }
+  }, [session]);
 
   return (
     <motion.div
@@ -67,5 +77,13 @@ export default function UsersPage() {
         <UserTable searchQuery={searchQuery} />
       </motion.div>
     </motion.div>
+  );
+}
+
+export default function UsersPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <UsersContent />
+    </Suspense>
   );
 }

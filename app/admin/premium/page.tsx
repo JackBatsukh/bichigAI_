@@ -3,8 +3,21 @@ import { motion } from "framer-motion";
 import PremiumStats from "@/components/admin/premiumCom/PremiumStats";
 import SubscriptionList from "@/components/admin/premiumCom/SubscriptionList";
 import PaymentHistory from "@/components/admin/premiumCom/PaymentHistory";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function PremiumPage() {
+  const { data: session } = useSession();
+    
+  
+    const router = useRouter();
+  
+    useEffect(() => {
+      if (session?.user.role == "USER") {
+        router.push("/");
+      }
+    }, [session]);
   return (
     <motion.div
       initial={{ opacity: 0 }}
